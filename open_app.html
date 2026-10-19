@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="Peterson Owusu Junior">
+<meta name="description" content="Wavelet Approach: bivariate and multiple wavelet analysis of financial and economic time series, by Peterson Owusu Junior.">
+<title>Wavelet Approach</title>
+<style>
+  :root { --bg: #f4f6f8; --fg: #1f2d3d; --accent: #1f6f8b; }
+  html, body { height: 100%; margin: 0; background: var(--bg); color: var(--fg);
+               font-family: "Segoe UI", system-ui, -apple-system, sans-serif; }
+  #app { width: 100%; height: 100%; border: 0; display: block; }
+  #offline { display: none; max-width: 640px; margin: 12vh auto; padding: 32px;
+             background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,.08); }
+  #offline h1 { margin-top: 0; font-size: 1.4rem; color: var(--accent); }
+  code, pre { background: #eef2f5; border-radius: 6px; padding: 2px 6px; font-size: .9rem; }
+  pre { padding: 12px; overflow-x: auto; }
+  a { color: var(--accent); }
+  button { background: var(--accent); color: #fff; border: 0; border-radius: 6px;
+           padding: 8px 16px; font-size: 1rem; cursor: pointer; }
+</style>
+</head>
+<body>
+
+<!-- ======================================================================
+     Set APP_URL to where the Shiny app is served.
+       * Local use : http://127.0.0.1:4321  (start the server first, see
+                     start_app.bat or README.md)
+       * Website   : https://<account>.shinyapps.io/wavelet_approach/
+     ====================================================================== -->
+<script>
+  const APP_URL = "http://127.0.0.1:4321/";
+</script>
+
+<iframe id="app" title="Wavelet Approach - bivariate and multiple wavelet analysis"
+        allow="fullscreen" loading="eager"></iframe>
+<script>document.getElementById("app").src = APP_URL;</script>
+
+<div id="offline">
+  <h1>The wavelet app is not running yet</h1>
+  <p>This page embeds the Shiny app served at <code id="url"></code>, but nothing answered there.</p>
+  <p>Start the server first (double-click <code>start_app.bat</code> in the app folder, or run):</p>
+  <pre>&amp; "C:\Program Files\R\R-4.6.0\bin\Rscript.exe" -e "shiny::runApp('C:/Users/peteo/wavelet/wavelet_app', port = 4321)"</pre>
+  <p>then <button onclick="location.reload()">retry</button> or open <a id="direct" href="#">the app directly</a>.</p>
+  <p style="font-size:.85rem;color:#6c757d">Once the app is published (e.g. on shinyapps.io), change <code>APP_URL</code> at the top of this file to the public address and the page will work from any website.</p>
+</div>
+
+<script>
+  const frame = document.getElementById("app");
+  const offline = document.getElementById("offline");
+  document.getElementById("url").textContent = APP_URL;
+  document.getElementById("direct").href = APP_URL;
+
+  function showOffline() { frame.style.display = "none"; offline.style.display = "block"; }
+
+  // Probe the server in parallel; if nothing answers, replace the blank frame with help.
+  // (no-cors: we only need to know whether something answered)
+  fetch(APP_URL, { mode: "no-cors", cache: "no-store" }).catch(showOffline);
+</script>
+</body>
+</html>

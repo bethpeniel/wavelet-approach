@@ -1,0 +1,14 @@
+# R / RStudio
+.Rhistory
+.RData
+.Rproj.user/
+*.Rproj
+.Renviron
+
+# shinyapps.io deployment metadata (contains account/app ids)
+rsconnect/
+
+# OS / editor
+Thumbs.db
+.DS_Store
+*.log
