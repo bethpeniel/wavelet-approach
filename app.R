@@ -253,7 +253,7 @@ server <- function(input, output, session) {
   })
 
   observeEvent(input$rep_dataset, {
-    unit <- switch(input$rep_dataset, africa = "week", crypto = "day", reit = "day", ghana = "month", "observation")
+    unit <- switch(input$rep_dataset, resilience = "day", africa = "week", crypto = "day", reit = "day", ghana = "month", "observation")
     updateSelectInput(session, "unit", selected = unit)
   })
 
@@ -305,7 +305,9 @@ server <- function(input, output, session) {
       validate(need(!is.null(prep), "Transformation failed."))
       out <- list(mode = input$mode, unit = input$unit, raw = r, date = prep$date, data = prep$data,
                   transform = transform_label(input$transformation, input$lag_n, input$volatility),
+                  transform_note = prep$note,
                   stats = summary_stats(prep$data))
+      if (length(prep$note)) showNotification(prep$note, type = "warning", duration = 12)
       N <- nrow(prep$data)
 
       if (input$mode == "biv") {
@@ -355,8 +357,10 @@ server <- function(input, output, session) {
 
   output$status <- renderUI({
     r <- res()
-    div(class = "small text-success mt-2", icon("check"),
-        sprintf(" Analysis finished in %s s (%s).", r$elapsed, r$transform))
+    tagList(
+      div(class = "small text-success mt-2", icon("check"),
+          sprintf(" Analysis finished in %s s (%s, N = %d).", r$elapsed, r$transform, nrow(r$data))),
+      if (length(r$transform_note)) div(class = "small text-warning mt-1", icon("triangle-exclamation"), " ", r$transform_note))
   })
 
   # ---- common outputs ----------------------------------------------------

@@ -3,6 +3,8 @@
 # ---------------------------------------------------------------------------
 
 REPLICATION <- list(
+  resilience = list(label = "African financial resilience: 12 African markets, asset classes & risk indices (daily, 2017-2025)",
+                    file = "data/Africa_Financial_resilience data.csv"),
   africa = list(label = "African stock market indices (weekly, 2011-2017)",
                 file = "data/AFRICA_week.csv"),
   crypto = list(label = "Gold & cryptocurrency returns (daily, 2015-2019)",
@@ -174,14 +176,18 @@ transform_data <- function(dates, vals, transformation = "none", n = 1, volatili
   if (volatility == "abs") out <- as.data.frame(lapply(out, abs))
   if (volatility == "sq")  out <- as.data.frame(lapply(out, function(x) x^2))
   names(out) <- names(vals)
+  note <- character(0)
   bad <- !is.finite(as.matrix(out))
   if (any(bad)) {
-    keep <- stats::complete.cases(ifelse(bad, NA, 1))
+    keep <- rowSums(bad) == 0
+    cols <- names(out)[colSums(bad) > 0]
+    note <- sprintf("%d row(s) removed because the transformation produced non-finite values in: %s (e.g. percentage change of a zero).",
+                    sum(!keep), paste(cols, collapse = ", "))
     out <- out[keep, , drop = FALSE]
     if (!is.null(dates)) dates <- dates[keep]
   }
   rownames(out) <- NULL
-  list(date = dates, data = out)
+  list(date = dates, data = out, note = note)
 }
 
 # ---------------------------------------------------------------------------

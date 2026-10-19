@@ -31,7 +31,7 @@ wavelet_app/
 │   ├── data_utils.R         file reading, date parsing, transformations, summary stats
 │   ├── bivariate_wavelets.R WaveletComp wrappers (coherence, phase, reconstruction)
 │   └── multiple_wavelets.R  MODWT, WC, WCC, WMC, WMCC, WLMC + ggplot2 plots
-├── data/                    replication datasets (AFRICA_week, gold_cryptos9, REIT, Ghana cocoa/gold/FX)
+├── data/                    example datasets (see below)
 ├── www/custom.css
 ├── deploy.R                 helper for shinyapps.io
 └── README.md
@@ -56,6 +56,16 @@ already running) and opens `open_app.html`, a plain HTML page that embeds the ap
 full-window iframe. If the server is not running, that page shows instructions instead of a
 blank frame. `open_app.html` is also the template for embedding the app in a website: change
 the `APP_URL` constant at the top of the file to the published address.
+
+## Example datasets
+
+| Dataset | File | Frequency | Content |
+|---|---|---|---|
+| African financial resilience | `Africa_Financial_resilience data.csv` | daily, Apr 2017 – Jun 2025 | 12 African stock markets (Botswana, BRVM, Kenya, Ghana, Namibia, Nigeria, Malawi, Mauritius, South Africa, Rwanda, Tanzania, Zambia), asset classes (cryptos, metals, agriculture, green bonds, clean energy, Shariah), sentiment indices (SHI, TRI, PRI), geopolitical risk (GPRD, GPRD_ACT, GPRD_THREAT) and VIX |
+| African stock market indices | `AFRICA_week.csv` | weekly, 2011 – 2017 | Nigeria, Egypt, South Africa, Morocco, Kenya, Ghana, Mauritius (levels) |
+| Gold & cryptocurrencies | `gold_cryptos9.txt` | daily, 2015 – 2019 | returns of gold and eight cryptocurrencies |
+| International REITs | `REIT.txt` | daily, 2017 – 2025 | returns of eight REIT markets |
+| Ghana cocoa, gold & exchange rate | `Dataset3_Gold+Cocoa+Exrate.txt` | monthly, 2015 – 2023 | levels |
 
 ## Input data (your own files)
 
