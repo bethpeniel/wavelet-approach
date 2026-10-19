@@ -88,6 +88,19 @@ The app is built around uploading new datasets; the bundled example files only i
   defaults to N/8.
 * Level `dj` covers periods `2^j` to `2^(j+1)` observations (d1 = 2–4, d2 = 4–8, …).
 
+## Source code on GitHub
+
+The app lives at <https://github.com/bethpeniel/wavelet-approach> (private). This folder is a
+git clone linked to it, so after editing any file either double-click `push_update.bat` or run:
+
+```powershell
+git add -A
+git commit -m "describe the change"
+git push
+```
+
+To make the repository public later: `gh repo edit bethpeniel/wavelet-approach --visibility public`.
+
 ## Publish and embed on your website
 
 1. Deploy to shinyapps.io (free tier works):
