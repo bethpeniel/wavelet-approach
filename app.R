@@ -35,7 +35,9 @@ APP_AUTHOR <- list(
   affiliation = "University of Cape Coast, Ghana",
   email       = "peterson.owusu@ucc.edu.gh",          # institutional (used for the footer link)
   emails      = c("peterson.owusu@ucc.edu.gh", "powusujunior@gmail.com"),
-  links       = c("Google Scholar" = "https://scholar.google.com/citations?user=r6ZueU4AAAAJ&hl=en",
+  website     = "https://positivecarryacademy.com/",
+  links       = c("Website"        = "https://positivecarryacademy.com/",
+                  "Google Scholar" = "https://scholar.google.com/citations?user=r6ZueU4AAAAJ&hl=en",
                   "Scopus"         = "https://www.scopus.com/authid/detail.uri?authorId=58833238800",
                   "LinkedIn"       = "https://www.linkedin.com/in/peterson-owusu-junior-phd-80858334/",
                   "ResearchGate"   = "https://www.researchgate.net/profile/Peterson-Owusu-Junior",
@@ -211,8 +213,9 @@ ui <- page_sidebar(
   ),
 
   tags$footer(class = "text-muted small mt-3",
-              HTML(sprintf('<strong>Wavelet Approach</strong> by <a href="mailto:%s">%s</a>, %s. ',
-                           APP_AUTHOR$email, APP_AUTHOR$name, APP_AUTHOR$affiliation)),
+              HTML(sprintf('<strong>Wavelet Approach</strong> by <a href="mailto:%s">%s</a>, %s (<a href="%s" target="_blank">%s</a>). ',
+                           APP_AUTHOR$email, APP_AUTHOR$name, APP_AUTHOR$affiliation,
+                           APP_AUTHOR$website, sub("^https?://", "", sub("/$", "", APP_AUTHOR$website)))),
               "Built with R Shiny, WaveletComp, waveslim and wavemulcor. ",
               "Layout inspired by the Connectedness Approach app by David Gabauer.")
 )

@@ -1,7 +1,7 @@
 # Wavelet Approach – Bivariate & Multiple Wavelet Analysis (Shiny app)
 
 **Author:** Peterson Owusu Junior, University of Cape Coast, Ghana
-— <peterson.owusu@ucc.edu.gh> · <powusujunior@gmail.com>
+— <peterson.owusu@ucc.edu.gh> · <powusujunior@gmail.com> · <https://positivecarryacademy.com/>
 ([Google Scholar](https://scholar.google.com/citations?user=r6ZueU4AAAAJ&hl=en) ·
 [Scopus](https://www.scopus.com/authid/detail.uri?authorId=58833238800) ·
 [LinkedIn](https://www.linkedin.com/in/peterson-owusu-junior-phd-80858334/) ·
