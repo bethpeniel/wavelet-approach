@@ -1,4 +1,4 @@
-# Bi-Partial-MultipleWavelets_Explore – Bivariate & Multiple Wavelet Analysis (Shiny app)
+# Bi-Partial-MultipleWavelets_Explore – Bivariate, Partial & Multiple Wavelet Analysis (Shiny app)
 
 **Author:** Peterson Owusu Junior, University of Cape Coast, Ghana
 — <peterson.owusu@ucc.edu.gh> · <powusujunior@gmail.com> · <https://positivecarryacademy.com/>
@@ -12,7 +12,7 @@ A browser-based app, modelled on David Gabauer's *Connectedness Approach* app, f
 studying co-movement of financial and economic time series in the time–frequency domain.
 
 Suggested citation: Owusu Junior, P. (2026). *Bi-Partial-MultipleWavelets_Explore: A Shiny application for
-bivariate and multiple wavelet analysis*. R Shiny application.
+bivariate, partial and multiple wavelet analysis*. R Shiny application.
 
 ## Status (checked 2026-10-20)
 
@@ -160,7 +160,7 @@ after the move to Connect Cloud. `deploy.R` is kept only as a fallback for re-pu
 ```html
 <div style="position:relative; width:100%; height:calc(100vh - 120px); min-height:800px;">
   <iframe src="https://01a1576a-2a57-ffbf-7f06-4a308e3389ec.share.connect.posit.cloud/"
-          title="Bi-Partial-MultipleWavelets_Explore: bivariate and multiple wavelet analysis"
+          title="Bi-Partial-MultipleWavelets_Explore: bivariate, partial and multiple wavelet analysis"
           style="position:absolute; inset:0; width:100%; height:100%; border:0;"
           loading="lazy" allow="fullscreen"></iframe>
 </div>

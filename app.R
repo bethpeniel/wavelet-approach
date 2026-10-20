@@ -1,5 +1,5 @@
 # ===========================================================================
-# Bi-Partial-MultipleWavelets_Explore - Bivariate & Multiple Wavelet Analysis
+# Bi-Partial-MultipleWavelets_Explore - Bivariate, Partial & Multiple Wavelet Analysis
 # Author : Peterson Owusu Junior (powusujunior@gmail.com)
 # A Shiny app in the spirit of the Connectedness Approach app
 # (https://davidgabauer.shinyapps.io/connectedness_approach/)
@@ -62,7 +62,7 @@ plot_card <- function(id, height = "560px", ...) {
 # ---------------------------------------------------------------------------
 ui <- page_sidebar(
   title = tags$span(tags$strong("Bi-Partial-MultipleWavelets_Explore"),
-                    tags$small(class = "text-muted ms-2", "Bivariate & multiple wavelet analysis")),
+                    tags$small(class = "text-muted ms-2", "Bivariate, partial & multiple wavelet analysis")),
   # Colour theme taken from the app's own correlation heatmaps: the red/white/blue
   # diverging scale (#b2182b / #f7f7f7 / #2166ac) dominates; steel teal (#1f6f8b)
   # and plasma orange (#f89441) are supporting accents.
@@ -689,7 +689,7 @@ about_ui <- function() {
                icon("link"), " ",
                HTML(paste(sprintf('<a href="%s" target="_blank">%s</a>', APP_AUTHOR$links, names(APP_AUTHOR$links)), collapse = " | "))),
         tags$p(class = "mb-0 small text-muted mt-2",
-               HTML(sprintf("Suggested citation: %s (%s). <em>Bi-Partial-MultipleWavelets_Explore: A Shiny application for bivariate and multiple wavelet analysis</em>. R Shiny application.",
+               HTML(sprintf("Suggested citation: %s (%s). <em>Bi-Partial-MultipleWavelets_Explore: A Shiny application for bivariate, partial and multiple wavelet analysis</em>. R Shiny application.",
                             APP_AUTHOR$name, format(Sys.Date(), "%Y"))))),
     h4("What this app does"),
     p("This app brings together two complementary wavelet toolkits for studying co-movement between financial and economic time series across time and frequency."),
