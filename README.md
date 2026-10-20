@@ -14,6 +14,17 @@ studying co-movement of financial and economic time series in the time–frequen
 Suggested citation: Owusu Junior, P. (2026). *Wavelet Approach: A Shiny application for
 bivariate and multiple wavelet analysis*. R Shiny application.
 
+## Status (checked 2026-10-20)
+
+| Component | State |
+|---|---|
+| Live app (Posit Connect Cloud) | **Online** at <https://01a1576a-2a57-ffbf-7f06-4a308e3389ec.share.connect.posit.cloud/> — public, serving the latest commit (author credit, colour-bar theme, five example datasets incl. African financial resilience) |
+| Source (GitHub) | <https://github.com/bethpeniel/wavelet-approach> — public, branch `main`, 11 commits, local folder and remote identical; every push triggers an automatic republish on Connect Cloud |
+| shinyapps.io copy | Terminated 2026-10-20 (`pete-econ/wavelet_approach`); `deploy.R` kept only as a fallback |
+| Local copy | `C:\Users\peteo\wavelet\wavelet_app`; runs with `start_app.bat` or the Rscript command below |
+| Website embed | Not yet added to <https://positivecarryacademy.com/> (WordPress + Elementor). Instructions in *Published app and embedding* below |
+| Custom Connect Cloud URL | Not set; the random-ID address above is the canonical link until one is configured in Connect Cloud settings |
+
 | Approach | Engine | Outputs |
 |---|---|---|
 | **Bivariate wavelets** (continuous Morlet) | `WaveletComp` | wavelet power, cross-wavelet power, wavelet coherence with phase arrows, average power/coherence, phase difference (band + image), reconstruction, tables |
@@ -131,15 +142,32 @@ The first deployment at `pete-econ.shinyapps.io/wavelet_approach` was terminated
 after the move to Connect Cloud. `deploy.R` is kept only as a fallback for re-publishing there
 (`source("deploy.R")` with the `pete-econ` account registered in rsconnect).
 
-Embed it in any web page, e.g. on positivecarryacademy.com, with:
+### Embedding on positivecarryacademy.com (WordPress + Elementor)
+
+1. Pages > Add New > "Wavelet Approach" > Edit with Elementor; in page settings choose the
+   *Elementor Full Width* layout.
+2. Drag in an **HTML** widget (not a Text widget) and paste the snippet below while logged in as an
+   Administrator (WordPress strips iframes saved by lower roles). Click Update.
+3. Add the page to the site menu (Appearance > Menus).
 
 ```html
-<iframe src="https://01a1576a-2a57-ffbf-7f06-4a308e3389ec.share.connect.posit.cloud/"
-        style="width:100%; height:100vh; border:0;" loading="lazy"
-        title="Wavelet Approach"></iframe>
+<div style="position:relative; width:100%; height:calc(100vh - 120px); min-height:800px;">
+  <iframe src="https://01a1576a-2a57-ffbf-7f06-4a308e3389ec.share.connect.posit.cloud/"
+          title="Wavelet Approach: bivariate and multiple wavelet analysis"
+          style="position:absolute; inset:0; width:100%; height:100%; border:0;"
+          loading="lazy" allow="fullscreen"></iframe>
+</div>
+<p style="text-align:right; font-size:0.85em;">
+  <a href="https://01a1576a-2a57-ffbf-7f06-4a308e3389ec.share.connect.posit.cloud/"
+     target="_blank" rel="noopener">Open the app in a new tab</a>
+</p>
 ```
 
-`open_app.html` already points at the published address and can be used as-is.
+Connect Cloud sends no `X-Frame-Options`/CSP headers, so framing is allowed. Adjust the `120px`
+to your header height. Nothing on the website changes when the app is updated; if a custom
+Connect Cloud URL is set later, replace the two addresses above.
+
+`open_app.html` in this folder is a stand-alone version of the same embed and works as-is.
 
    For WordPress, Wix, Squarespace or similar, paste that snippet into an HTML / embed block.
 
