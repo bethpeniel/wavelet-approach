@@ -28,7 +28,7 @@ if (!exists("prepare_dataset")) {
   for (f in list.files("R", pattern = "\\.[Rr]$", full.names = TRUE)) source(f, local = FALSE)
 }
 
-options(shiny.maxRequestSize = 30 * 1024^2, spinner.type = 6, spinner.color = "#1f6f8b")
+options(shiny.maxRequestSize = 30 * 1024^2, spinner.type = 6, spinner.color = "#b2182b")
 
 APP_AUTHOR <- list(
   name        = "Peterson Owusu Junior",
@@ -61,12 +61,12 @@ plot_card <- function(id, height = "560px", ...) {
 ui <- page_sidebar(
   title = tags$span(tags$strong("Wavelet Approach"),
                     tags$small(class = "text-muted ms-2", "Bivariate & multiple wavelet analysis")),
-  # Colour theme taken from the app's own charts: steel teal lines (#1f6f8b),
-  # red/white/blue diverging correlation scale (#b2182b / #f7f7f7 / #2166ac),
-  # plasma gradient accents (#f89441) and light grey panels.
+  # Colour theme taken from the app's own correlation heatmaps: the red/white/blue
+  # diverging scale (#b2182b / #f7f7f7 / #2166ac) dominates; steel teal (#1f6f8b)
+  # and plasma orange (#f89441) are supporting accents.
   theme = bs_theme(version = 5,
-                   primary = "#1f6f8b", secondary = "#6c7a89", success = "#2a9d8f",
-                   info = "#2166ac", warning = "#f89441", danger = "#b2182b",
+                   primary = "#b2182b", secondary = "#2166ac", success = "#2a9d8f",
+                   info = "#2166ac", warning = "#f4a582", danger = "#67001f",
                    bg = "#f7f7f7", fg = "#1f2d3d",
                    base_font = font_google("Source Sans 3", local = FALSE),
                    heading_font = font_google("Source Sans 3", local = FALSE)),
