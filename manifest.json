@@ -224,6 +224,41 @@
         "RemoteSha.Version": "0.1-6"
       }
     },
+    "biwavelet": {
+      "Source": "CRAN",
+      "Repository": "https://cloud.r-project.org",
+      "description": {
+        "Package": "biwavelet",
+        "Type": "Package",
+        "Title": "Conduct Univariate and Bivariate Wavelet Analyses",
+        "Version": "0.20.22",
+        "Date": "2024-08-08",
+        "Authors@R": "c(person(given = \"Tarik\",\n                      family = \"Gouhier\",\n                      role = c(\"aut\", \"cre\"),\n                      email = \"tarik.gouhier@gmail.com\"),\n             person(given = \"Aslak\",\n                      family = \"Grinsted\",\n                      role = \"aut\"),\n             person(given = \"Viliam\",\n                      family = \"Simko\",\n                      role = \"aut\"))",
+        "Description": "This is a port of the WTC MATLAB package written by Aslak Grinsted\n    and the wavelet program written by Christopher Torrence and Gibert P.\n    Compo. This package can be used to perform univariate and bivariate\n    (cross-wavelet, wavelet coherence, wavelet clustering) analyses.",
+        "License": "GPL (>= 2)",
+        "Encoding": "UTF-8",
+        "URL": "https://github.com/tgouhier/biwavelet",
+        "BugReports": "https://github.com/tgouhier/biwavelet/issues",
+        "LazyData": "yes",
+        "LinkingTo": "Rcpp",
+        "Imports": "fields, foreach, methods, Rcpp (>= 0.12.2)",
+        "Suggests": "testthat, knitr, rmarkdown, devtools",
+        "RoxygenNote": "7.3.2",
+        "NeedsCompilation": "yes",
+        "Packaged": "2024-08-17 18:08:01 UTC; tarik",
+        "Author": "Tarik Gouhier [aut, cre],\n  Aslak Grinsted [aut],\n  Viliam Simko [aut]",
+        "Maintainer": "Tarik Gouhier <tarik.gouhier@gmail.com>",
+        "Repository": "CRAN",
+        "Date/Publication": "2024-08-17 22:20:05 UTC",
+        "Built": "R 4.6.0; x86_64-w64-mingw32; 2026-06-09 02:28:18 UTC; windows",
+        "Archs": "x64",
+        "RemoteType": "standard",
+        "RemotePkgRef": "biwavelet",
+        "RemoteRef": "biwavelet",
+        "RemoteRepos": "https://cran.rstudio.com",
+        "RemoteSha.Version": "0.20.22"
+      }
+    },
     "bslib": {
       "Source": "CRAN",
       "Repository": "https://cloud.r-project.org",
@@ -360,6 +395,27 @@
         "RemoteRef": "cli",
         "RemoteRepos": "https://cran.rstudio.com",
         "RemoteSha.Version": "3.6.6"
+      }
+    },
+    "codetools": {
+      "Source": "CRAN",
+      "Repository": "https://cloud.r-project.org",
+      "description": {
+        "Package": "codetools",
+        "Version": "0.2-20",
+        "Priority": "recommended",
+        "Author": "Luke Tierney <luke-tierney@uiowa.edu>",
+        "Description": "Code analysis tools for R.",
+        "Title": "Code Analysis Tools for R",
+        "Depends": "R (>= 2.1)",
+        "Maintainer": "Luke Tierney <luke-tierney@uiowa.edu>",
+        "URL": "https://gitlab.com/luke-tierney/codetools",
+        "License": "GPL",
+        "NeedsCompilation": "no",
+        "Packaged": "2024-03-31 18:18:09 UTC; luke",
+        "Repository": "CRAN",
+        "Date/Publication": "2024-03-31 20:10:06 UTC",
+        "Built": "R 4.6.0; ; 2026-04-24 08:16:28 UTC; windows"
       }
     },
     "commonmark": {
@@ -520,6 +576,39 @@
         "RemoteSha.Version": "0.6.39"
       }
     },
+    "dotCall64": {
+      "Source": "CRAN",
+      "Repository": "https://cloud.r-project.org",
+      "description": {
+        "Package": "dotCall64",
+        "Type": "Package",
+        "Title": "Enhanced Foreign Function Interface Supporting Long Vectors",
+        "Version": "1.2",
+        "Date": "2024-10-03",
+        "Authors@R": "c(person(\"Kaspar\", \"Moesinger\", role = c(\"aut\"),\n    email = \"kaspar.moesinger@gmail.com\"), \n    person(\"Florian\", \"Gerber\", role = c(\"aut\"),\n    email = \"flora.fauna.gerber@gmail.com\",\n    comment = c(ORCID = \"0000-0001-8545-5263\")),\n    person(\"Reinhard\", \"Furrer\", role = c(\"cre\", \"ctb\"),\n    email = \"reinhard.furrer@uzh.ch\",\n    comment = c(ORCID = \"0000-0002-6319-2332\")))",
+        "Description": "Provides .C64(), which is an enhanced version of .C()\n    and .Fortran() from the foreign function interface. .C64() supports long\n    vectors, arguments of type 64-bit integer, and provides a mechanism to\n    avoid unnecessary copies of read-only and write-only arguments. This\n    makes it a convenient and fast interface to C/C++ and Fortran code.",
+        "License": "GPL (>= 2)",
+        "URL": "https://git.math.uzh.ch/reinhard.furrer/dotCall64",
+        "BugReports": "https://git.math.uzh.ch/reinhard.furrer/dotCall64/-/issues",
+        "Depends": "R (>= 4.0)",
+        "Suggests": "microbenchmark, RhpcBLASctl, RColorBrewer, roxygen2, spam,\ntestthat,",
+        "Collate": "'vector_dc.R' 'dotCall64.R' 'zzz.R'",
+        "RoxygenNote": "7.2.3",
+        "NeedsCompilation": "yes",
+        "Packaged": "2024-10-03 11:57:25 UTC; furrer",
+        "Author": "Kaspar Moesinger [aut],\n  Florian Gerber [aut] (<https://orcid.org/0000-0001-8545-5263>),\n  Reinhard Furrer [cre, ctb] (<https://orcid.org/0000-0002-6319-2332>)",
+        "Maintainer": "Reinhard Furrer <reinhard.furrer@uzh.ch>",
+        "Repository": "CRAN",
+        "Date/Publication": "2024-10-04 17:10:05 UTC",
+        "Built": "R 4.6.0; x86_64-w64-mingw32; 2026-06-09 01:06:44 UTC; windows",
+        "Archs": "x64",
+        "RemoteType": "standard",
+        "RemotePkgRef": "dotCall64",
+        "RemoteRef": "dotCall64",
+        "RemoteRepos": "https://cran.rstudio.com",
+        "RemoteSha.Version": "1.2"
+      }
+    },
     "evaluate": {
       "Source": "CRAN",
       "Repository": "https://cloud.r-project.org",
@@ -615,6 +704,36 @@
         "RemoteSha.Version": "1.2.0"
       }
     },
+    "fields": {
+      "Source": "CRAN",
+      "Repository": "https://cloud.r-project.org",
+      "description": {
+        "Package": "fields",
+        "Version": "17.3",
+        "Date": "2026-05-03",
+        "Title": "Tools for Spatial Data",
+        "Authors@R": "c( person(\"Douglas\", \"Nychka\", role = c(\"aut\", \"cre\"),\n               email = \"douglasnychka@gmail.com\"),\n            person(\"Reinhard\", \"Furrer\", role = c(\"aut\"),\n               email = \"reinhard.furrer@math.uzh.ch\"),\n            person(\"John\", \"Paige\", role = c(\"aut\"),\n               email = \"paigejo@uw.edu\"),\n            person(\"Stephan\", \"Sain\", role = \"aut\",\n               email = \"sainsr2@gmail.com\"),\n\t     person(\"Florian\", \"Gerber\", role = \"aut\",\n               email = \"flora.fauna.gerber@gmail.com\"),\n\t     person(\"Matthew\", \"Iverson\", role = \"aut\",\n               email = \"miverson@mines.edu\"),\n\t     person(\"Rider\", \"Johnson\", role = \"aut\",\n               email = \"riderjohnson@mines.edu\")\n\t       ) ",
+        "Maintainer": "Douglas Nychka <douglasnychka@gmail.com>",
+        "Description": "For curve, surface and function fitting with an emphasis\n on splines, spatial data, geostatistics,  and spatial statistics. The major methods\n include cubic, and thin plate splines, Kriging, and compactly supported\n covariance functions for large data sets. The splines and Kriging methods are\n supported by functions that can determine the smoothing parameter\n (nugget and sill variance) and other covariance function parameters by cross\n validation and also by restricted maximum likelihood. For Kriging\n there is an easy to use function that also estimates the correlation\n scale (range parameter).  A major feature is that any covariance function\n implemented in R and following a simple format can be used for\n spatial prediction. There are also many useful functions for plotting\n and working with spatial data as images. This package also contains\n an implementation of sparse matrix methods for large spatial data\n sets and currently requires the sparse matrix (spam) package. Use\n help(fields) to get started and for an overview. All graphics functions\n focus on using  base R graphics.  The fields source\n code is deliberately commented and provides useful explanations of\n numerical details as a companion to the manual pages. The commented\n source code can be viewed by expanding the source code version\n and looking in the R subdirectory. The reference for fields can be generated\n by the citation function in R and has DOI <doi:10.5065/D6W957CT>. Development\n of this package was supported in part by the National Science Foundation  Grant\n 1417857,  the National Center for Atmospheric Research, and Colorado School of Mines.\n See the Fields URL\n for a vignette on using this package and some background on spatial statistics.",
+        "License": "GPL (>= 2)",
+        "URL": "https://github.com/dnychka/fieldsRPackage",
+        "Depends": "R (>= 4.0.0), methods, spam, viridisLite, RColorBrewer",
+        "Imports": "maps",
+        "Suggests": "mapproj",
+        "NeedsCompilation": "yes",
+        "Repository": "CRAN",
+        "Packaged": "2026-05-04 12:41:59 UTC; nychka@mines.edu",
+        "Author": "Douglas Nychka [aut, cre],\n  Reinhard Furrer [aut],\n  John Paige [aut],\n  Stephan Sain [aut],\n  Florian Gerber [aut],\n  Matthew Iverson [aut],\n  Rider Johnson [aut]",
+        "Date/Publication": "2026-05-05 12:00:02 UTC",
+        "Built": "R 4.6.0; x86_64-w64-mingw32; 2026-06-09 02:17:02 UTC; windows",
+        "Archs": "x64",
+        "RemoteType": "standard",
+        "RemotePkgRef": "fields",
+        "RemoteRef": "fields",
+        "RemoteRepos": "https://cran.rstudio.com",
+        "RemoteSha.Version": "17.3"
+      }
+    },
     "fontawesome": {
       "Source": "CRAN",
       "Repository": "https://cloud.r-project.org",
@@ -647,6 +766,39 @@
         "RemoteRef": "fontawesome",
         "RemoteRepos": "https://cran.rstudio.com",
         "RemoteSha.Version": "0.5.3"
+      }
+    },
+    "foreach": {
+      "Source": "CRAN",
+      "Repository": "https://cloud.r-project.org",
+      "description": {
+        "Package": "foreach",
+        "Type": "Package",
+        "Title": "Provides Foreach Looping Construct",
+        "Version": "1.5.2",
+        "Authors@R": "c(person(\"Folashade\", \"Daniel\", role=\"cre\", email=\"fdaniel@microsoft.com\"),\n             person(\"Hong\", \"Ooi\", role=\"ctb\"),\n             person(\"Rich\", \"Calaway\", role=\"ctb\"),\n             person(\"Microsoft\", role=c(\"aut\", \"cph\")),\n             person(\"Steve\", \"Weston\", role=\"aut\"))",
+        "Description": "Support for the foreach looping construct.  Foreach is an\n        idiom that allows for iterating over elements in a collection,\n        without the use of an explicit loop counter.  This package in\n        particular is intended to be used for its return value, rather\n        than for its side effects.  In that sense, it is similar to the\n        standard lapply function, but doesn't require the evaluation\n        of a function.  Using foreach without side effects also\n        facilitates executing the loop in parallel.",
+        "License": "Apache License (== 2.0)",
+        "URL": "https://github.com/RevolutionAnalytics/foreach",
+        "BugReports": "https://github.com/RevolutionAnalytics/foreach/issues",
+        "Depends": "R (>= 2.5.0)",
+        "Imports": "codetools, utils, iterators",
+        "Suggests": "randomForest, doMC, doParallel, testthat, knitr, rmarkdown",
+        "VignetteBuilder": "knitr",
+        "RoxygenNote": "7.1.1",
+        "Collate": "'callCombine.R' 'foreach.R' 'do.R' 'foreach-ext.R'\n'foreach-pkg.R' 'getDoPar.R' 'getDoSeq.R' 'getsyms.R' 'iter.R'\n'nextElem.R' 'onLoad.R' 'setDoPar.R' 'setDoSeq.R' 'times.R'\n'utils.R'",
+        "NeedsCompilation": "no",
+        "Packaged": "2022-01-11 04:21:12 UTC; fdaniel",
+        "Author": "Folashade Daniel [cre],\n  Hong Ooi [ctb],\n  Rich Calaway [ctb],\n  Microsoft [aut, cph],\n  Steve Weston [aut]",
+        "Maintainer": "Folashade Daniel <fdaniel@microsoft.com>",
+        "Repository": "CRAN",
+        "Date/Publication": "2022-02-02 09:20:02 UTC",
+        "Built": "R 4.6.0; ; 2026-06-09 01:59:44 UTC; windows",
+        "RemoteType": "standard",
+        "RemotePkgRef": "foreach",
+        "RemoteRef": "foreach",
+        "RemoteRepos": "https://cran.rstudio.com",
+        "RemoteSha.Version": "1.5.2"
       }
     },
     "fs": {
@@ -1010,6 +1162,34 @@
         "RemoteSha.Version": "0.3.0"
       }
     },
+    "iterators": {
+      "Source": "CRAN",
+      "Repository": "https://cloud.r-project.org",
+      "description": {
+        "Package": "iterators",
+        "Type": "Package",
+        "Title": "Provides Iterator Construct",
+        "Version": "1.0.14",
+        "Authors@R": "c(person(\"Folashade\", \"Daniel\", role=\"cre\", email=\"fdaniel@microsoft.com\"),\n             person(\"Revolution\", \"Analytics\", role=c(\"aut\", \"cph\")),\n             person(\"Steve\", \"Weston\", role=\"aut\"))",
+        "Description": "Support for iterators, which allow a programmer to traverse\n    through all the elements of a vector, list, or other collection of data.",
+        "URL": "https://github.com/RevolutionAnalytics/iterators",
+        "Depends": "R (>= 2.5.0), utils",
+        "Suggests": "RUnit, foreach",
+        "License": "Apache License (== 2.0)",
+        "NeedsCompilation": "no",
+        "Packaged": "2022-01-16 18:19:31 UTC; folashade",
+        "Author": "Folashade Daniel [cre],\n  Revolution Analytics [aut, cph],\n  Steve Weston [aut]",
+        "Maintainer": "Folashade Daniel <fdaniel@microsoft.com>",
+        "Repository": "CRAN",
+        "Date/Publication": "2022-02-05 00:50:08 UTC",
+        "Built": "R 4.6.0; ; 2026-06-09 01:06:06 UTC; windows",
+        "RemoteType": "standard",
+        "RemotePkgRef": "iterators",
+        "RemoteRef": "iterators",
+        "RemoteRepos": "https://cran.rstudio.com",
+        "RemoteSha.Version": "1.0.14"
+      }
+    },
     "jquerylib": {
       "Source": "CRAN",
       "Repository": "https://cloud.r-project.org",
@@ -1265,6 +1445,38 @@
         "RemoteRef": "magrittr",
         "RemoteRepos": "https://cran.rstudio.com",
         "RemoteSha.Version": "2.0.5"
+      }
+    },
+    "maps": {
+      "Source": "CRAN",
+      "Repository": "https://cloud.r-project.org",
+      "description": {
+        "Package": "maps",
+        "Title": "Draw Geographical Maps",
+        "Version": "3.4.3",
+        "Date": "2025-05-15",
+        "Description": "Display of maps.  Projection code and larger maps are in\n             separate packages ('mapproj' and 'mapdata').",
+        "Depends": "R (>= 3.5.0)",
+        "Imports": "graphics, utils",
+        "LazyData": "yes",
+        "Suggests": "mapproj (>= 1.2-0), mapdata (>= 2.3.0), sf, rnaturalearth",
+        "License": "GPL-2",
+        "URL": "https://github.com/adeckmyn/maps",
+        "BugReports": "https://github.com/adeckmyn/maps/issues",
+        "Authors@R": "c(person(given  = c(\"Richard\", \"A.\"),\n                    family = \"Becker\",\n                    role   = \"aut\",\n                    comment= \"Original S code\"),\n             person(given  = c(\"Allan\", \"R.\"),\n                    family = \"Wilks\",\n                    role   = \"aut\",\n                    comment= \"Original S code\"),\n             person(given  = \"Ray\",\n                    family = \"Brownrigg\",\n                    role   = c(\"trl\", \"aut\"),\n                    comment= \"R version\"),\n             person(given  = c(\"Thomas\", \"P.\"),\n                    family = \"Minka\",\n                    role   = \"aut\",\n                    comment= \"Enhancements\"),\n             person(given  = \"Alex\",\n                    family = \"Deckmyn\",\n                    role   = c(\"aut\", \"cre\"),\n                    comment= c(ORCID=\"0009-0002-2010-8310\"),\n                    email  = \"alex.deckmyn@meteo.be\"))",
+        "NeedsCompilation": "yes",
+        "Repository": "CRAN",
+        "Packaged": "2025-05-19 08:35:55 UTC; alex",
+        "Author": "Richard A. Becker [aut] (Original S code),\n  Allan R. Wilks [aut] (Original S code),\n  Ray Brownrigg [trl, aut] (R version),\n  Thomas P. Minka [aut] (Enhancements),\n  Alex Deckmyn [aut, cre] (ORCID:\n    <https://orcid.org/0009-0002-2010-8310>)",
+        "Maintainer": "Alex Deckmyn <alex.deckmyn@meteo.be>",
+        "Date/Publication": "2025-05-26 17:40:02 UTC",
+        "Built": "R 4.6.0; x86_64-w64-mingw32; 2026-06-09 01:06:44 UTC; windows",
+        "Archs": "x64",
+        "RemoteType": "standard",
+        "RemotePkgRef": "maps",
+        "RemoteRef": "maps",
+        "RemoteRepos": "https://cran.rstudio.com",
+        "RemoteSha.Version": "3.4.3"
       }
     },
     "memoise": {
@@ -1949,6 +2161,41 @@
         "RemoteSha.Version": "0.1.7-2"
       }
     },
+    "spam": {
+      "Source": "CRAN",
+      "Repository": "https://cloud.r-project.org",
+      "description": {
+        "Package": "spam",
+        "Type": "Package",
+        "Title": "SPArse Matrix",
+        "Version": "2.11-4",
+        "Date": "2026-05-28",
+        "Authors@R": "c(person(\"Reinhard\", \"Furrer\", role = c(\"aut\", \"cre\"),\n                    email = \"reinhard.furrer@math.uzh.ch\",\n                    comment = c(ORCID = \"0000-0002-6319-2332\")),\n             person(\"Florian\", \"Gerber\", role = c(\"aut\"),\n                    email = \"florian.gerber@math.uzh.ch\",\n                    comment = c(ORCID = \"0000-0001-8545-5263\")),\n             person(\"Roman\", \"Flury\", role = c(\"aut\"),\n                    email = \"roman.flury@math.uzh.ch\",\n                    comment = c(ORCID = \"0000-0002-0349-8698\")),\n             person(\"Daniel\", \"Gerber\", role = \"ctb\",\n                    email = \"daniel_gerber_2222@hotmail.com\"),\n             person(\"Kaspar\", \"Moesinger\", role = \"ctb\",\n                    email = \"kaspar.moesinger@gmail.com\"),\n             person(\"Annina\", \"Cincera\", email = \"annina.cincera@math.uzh.ch\", role = \"ctb\"),\n             person(\"Youcef\", \"Saad\", role = \"ctb\",\n                    comment = \"SPARSEKIT http://www-users.cs.umn.edu/~saad/software/SPARSKIT/\"),\n             person(c(\"Esmond\", \"G.\"), \"Ng\", role = \"ctb\",\n                    comment = \"Fortran Cholesky routines\"),\n             person(c(\"Barry\", \"W.\"), \"Peyton\", role = \"ctb\",\n                    comment = \"Fortran Cholesky routines\"),\n             person(c(\"Joseph\", \"W.H.\"), \"Liu\", role = \"ctb\",\n                    comment = \"Fortran Cholesky routines\"),\n             person(c(\"Alan\", \"D.\"), \"George\", role = \"ctb\",\n                    comment = \"Fortran Cholesky routines\"),\n             person(c(\"Lehoucq\", \"B.\"), \"Rich\", role = \"ctb\",\n                    comment = \"ARPACK\"),\n             person(c(\"Maschhoff\"), \"Kristi\", role = \"ctb\",\n                    comment = \"ARPACK\"),\n             person(c(\"Sorensen\", \"C.\"), \"Danny\", role = \"ctb\",\n                    comment = \"ARPACK\"),\n             person(c(\"Yang\"), \"Chao\", role = \"ctb\",\n                    comment = \"ARPACK\"))",
+        "Depends": "R (>= 4.0)",
+        "Imports": "dotCall64, grid, methods, Rcpp (>= 1.0.8.3)",
+        "LinkingTo": "Rcpp",
+        "Suggests": "spam64, fields, Matrix, testthat, R.rsp, truncdist, knitr,\nrmarkdown",
+        "VignetteBuilder": "R.rsp, knitr",
+        "Description": "Set of functions for sparse matrix algebra.\n    Differences with other sparse matrix packages are:\n    (1) we only support (essentially) one sparse matrix format,\n    (2) based on transparent and simple structure(s),\n    (3) tailored for MCMC calculations within G(M)RF.\n    (4) and it is fast and scalable (with the extension package spam64).\n    Documentation about 'spam' is provided by vignettes included in this package, see also Furrer and Sain (2010) <doi:10.18637/jss.v036.i10>; see 'citation(\"spam\")' for details.",
+        "LazyData": "true",
+        "License": "LGPL-2 | BSD_3_clause + file LICENSE",
+        "URL": "https://www.math.uzh.ch:443/spam/",
+        "BugReports": "https://git.math.uzh.ch/reinhard.furrer/spam/-/issues",
+        "NeedsCompilation": "yes",
+        "Packaged": "2026-05-28 14:59:09 UTC; furrer",
+        "Author": "Reinhard Furrer [aut, cre] (ORCID:\n    <https://orcid.org/0000-0002-6319-2332>),\n  Florian Gerber [aut] (ORCID: <https://orcid.org/0000-0001-8545-5263>),\n  Roman Flury [aut] (ORCID: <https://orcid.org/0000-0002-0349-8698>),\n  Daniel Gerber [ctb],\n  Kaspar Moesinger [ctb],\n  Annina Cincera [ctb],\n  Youcef Saad [ctb] (SPARSEKIT\n    http://www-users.cs.umn.edu/~saad/software/SPARSKIT/),\n  Esmond G. Ng [ctb] (Fortran Cholesky routines),\n  Barry W. Peyton [ctb] (Fortran Cholesky routines),\n  Joseph W.H. Liu [ctb] (Fortran Cholesky routines),\n  Alan D. George [ctb] (Fortran Cholesky routines),\n  Lehoucq B. Rich [ctb] (ARPACK),\n  Maschhoff Kristi [ctb] (ARPACK),\n  Sorensen C. Danny [ctb] (ARPACK),\n  Yang Chao [ctb] (ARPACK)",
+        "Maintainer": "Reinhard Furrer <reinhard.furrer@math.uzh.ch>",
+        "Repository": "CRAN",
+        "Date/Publication": "2026-05-29 16:50:02 UTC",
+        "Built": "R 4.6.0; x86_64-w64-mingw32; 2026-06-09 01:59:50 UTC; windows",
+        "Archs": "x64",
+        "RemoteType": "standard",
+        "RemotePkgRef": "spam",
+        "RemoteRef": "spam",
+        "RemoteRepos": "https://cran.rstudio.com",
+        "RemoteSha.Version": "2.11-4"
+      }
+    },
     "tibble": {
       "Source": "CRAN",
       "Repository": "https://cloud.r-project.org",
@@ -2354,7 +2601,7 @@
   },
   "files": {
     "app.R": {
-      "checksum": "4d518b8bc1e9f2f8ab3f90a56a34eb2e"
+      "checksum": "fb6affa8bfd7aa67356b61db30123c10"
     },
     "data/Africa_Financial_resilience data.csv": {
       "checksum": "658e1e816586bb9185f263f95af0aaec"
@@ -2380,8 +2627,11 @@
     "R/multiple_wavelets.R": {
       "checksum": "72704d0e378567d381f74246707450d5"
     },
+    "R/partial_wavelets.R": {
+      "checksum": "1fdd79f3ac88f40e8f0bcf7da5af9d91"
+    },
     "www/custom.css": {
-      "checksum": "0d1fa1e6615a30cf8212be650a8e9b34"
+      "checksum": "5af436b1a7988e60331b26566fe9f6ab"
     }
   },
   "users": null

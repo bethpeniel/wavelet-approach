@@ -18,8 +18,8 @@ bivariate and multiple wavelet analysis*. R Shiny application.
 
 | Component | State |
 |---|---|
-| Live app (Posit Connect Cloud) | **Online** at <https://01a1576a-2a57-ffbf-7f06-4a308e3389ec.share.connect.posit.cloud/> — public, serving the latest commit (author credit, colour-bar theme, five example datasets incl. African financial resilience) |
-| Source (GitHub) | <https://github.com/bethpeniel/wavelet-approach> — public, branch `main`, 11 commits, local folder and remote identical; every push triggers an automatic republish on Connect Cloud |
+| Live app (Posit Connect Cloud) | **Online** at <https://01a1576a-2a57-ffbf-7f06-4a308e3389ec.share.connect.posit.cloud/> — public, serving the latest commit (bivariate, partial and multiple wavelets; author credit; colour-bar theme; five example datasets) |
+| Source (GitHub) | <https://github.com/bethpeniel/wavelet-approach> — public, branch `main`, local folder and remote identical; every push triggers an automatic republish on Connect Cloud |
 | shinyapps.io copy | Terminated 2026-10-20 (`pete-econ/wavelet_approach`); `deploy.R` kept only as a fallback |
 | Local copy | `C:\Users\peteo\wavelet\wavelet_app`; runs with `start_app.bat` or the Rscript command below |
 | Website embed | Not yet added to <https://positivecarryacademy.com/> (WordPress + Elementor). Instructions in *Published app and embedding* below |
@@ -28,6 +28,7 @@ bivariate and multiple wavelet analysis*. R Shiny application.
 | Approach | Engine | Outputs |
 |---|---|---|
 | **Bivariate wavelets** (continuous Morlet) | `WaveletComp` | wavelet power, cross-wavelet power, wavelet coherence with phase arrows, average power/coherence, phase difference (band + image), reconstruction, tables |
+| **Partial wavelet coherence** | `biwavelet` (`wtc`, `pwtc`), after Mihanović et al. 2009 and Ng & Chan 2012 | plain coherence of y with x1 and x2; PWTC(y, x1 \| x2) and PWTC(y, x2 \| x1) with Monte-Carlo significance, cone of influence and phase arrows; stacked WTC-vs-PWTC comparison; period tables |
 | **Multiple wavelets** (MODWT) | `waveslim`, `wavemulcor` (after Fernández-Macho 2012 / Polanco-Martínez's `W2CWM2C`) | MODWT decomposition, pairwise wavelet correlation, wavelet cross-correlation, wavelet multiple correlation (WMC), wavelet multiple cross-correlation (WMCC), wavelet local multiple correlation (WLMC), tables |
 
 Common tabs: data table, raw data, transformed data, summary statistics, and a
@@ -103,6 +104,12 @@ The app is built around uploading new datasets; the bundled example files only i
 * **Bivariate**: `dj` controls frequency resolution (1/20 is quick; 1/250 is very slow).
   Monte-Carlo significance with 100 simulations takes a few seconds for ~1,000 observations.
   The *Phase difference* tab lets you pick the period band to average over.
+* **Partial**: choose the dependent series `y`, the variable of interest `x1` and the control
+  `x2`; the app returns both conditional coherences. `dj = 1/12` is the biwavelet default; the
+  Monte-Carlo test (AR(1) surrogates) costs roughly one second per draw per coherence on 1,500
+  observations, so use 0 draws while exploring and 100-300 for a final figure. This reproduces the
+  workflow of the `Bi_Partial_Wavelets` scripts (`wtc` of the pair, then `pwtc(y, x1, x2)` and
+  `pwtc(y, x2, x1)`).
 * **Multiple**: the maximum number of levels `J` depends on the sample size and filter
   (boundary coefficients are removed with a brick wall; the app clamps `J` and tells you).
   `Max lag` sets the lead/lag range for cross-correlations. The local window `M` for WLMC
@@ -192,13 +199,21 @@ need compiled code that is not available in the WebAssembly R build.)
 * Barson, Z., Owusu Junior, P., & Adam, A. M. (2023). Comovement between commodity returns in Ghana: The role of exchange rates. *Journal of Economic Structures*, 12, 17. https://doi.org/10.1186/s40008-023-00312-z
 * Owusu Junior, P., Tetteh, J. E., Nkrumah-Boadu, B., & Adjei, A. N. K. (2024). Comovement of African stock markets: Any influence from the COVID-19 pandemic? *Heliyon*, 10(9), e29409. https://doi.org/10.1016/j.heliyon.2024.e29409
 * Yeboah, S. D., Owusu Junior, P., Idun, A. A.-A., Akorsu, P. K., & Fumey, M. P. (2025). Dynamic interdependence of major currencies and the US dollar: A wavelet coherence approach. *Future Business Journal*, 11(1). https://doi.org/10.1186/s43093-025-00636-1
+* Adjei, A. N. K., Tweneboah, G., & Owusu Junior, P. (2022). Interdependence of economic policy uncertainty and business cycles in selected emerging market economies. *Journal of Financial Economic Policy*, 14(5), 601–632. https://doi.org/10.1108/JFEP-07-2021-0193
+* Kyei, C. B., Asafo-Adjei, E., Owusu Junior, P., Adam, A. M., Idun, A. A.-A., & Boateng, J. K. G. A. (2023). Nexus between commodities and banking sector financial soundness: The role of general macroeconomic setting in Ghana. *Cogent Economics & Finance*, 11(1), 2173871. (bi-wavelet, wavelet multiple and partial wavelet coherence) https://doi.org/10.1080/23322039.2023.2173871
 * Tetteh, J. E., & Owusu Junior, P. (2025). Co-movement between stock markets in advanced economies and Africa in times of uncertainty: A time-frequency domain approach. *PLOS ONE*, 20(11), e0334325. https://doi.org/10.1371/journal.pone.0334325
+* Woode, J. K., Idun, A. A.-A., Kawor, S., Owusu Junior, P., & Adam, A. M. (2026). Commodity imports and exports dependence, market sentiment, and pressure currencies in Sub-Saharan Africa: A time–frequency wavelet analysis. *Strategic Business Research*, 2, 100054. (bi-wavelet, partial wavelet and multiple wavelet analysis) https://doi.org/10.1016/j.sbr.2026.100054
+
+### Related applications by co-authors
+
+* Nkrumah-Boadu, B., Tweneboah, G., & Frimpong, S. (2024). On the partial impact of uncertainties on the nexus between macroeconomic fundamentals in West Africa. *Heliyon*, 10, e35976. (bi- and partial wavelet coherence) https://doi.org/10.1016/j.heliyon.2024.e35976
 
 ### Software
 
 Peterson Owusu Junior is acknowledged in the W2CWM2C package documentation (`?W2CWM2C`) for reporting bugs that were fixed in the package.
 
 * Roesch, A., & Schmidbauer, H. (2025). *WaveletComp: Computational wavelet analysis*. R package version 1.2. https://doi.org/10.32614/CRAN.package.WaveletComp
+* Gouhier, T. C., Grinsted, A., & Simko, V. (2024). *biwavelet: Conduct univariate and bivariate wavelet analyses*. R package version 0.20.22. https://cran.r-project.org/package=biwavelet · https://github.com/tgouhier/biwavelet
 * Polanco-Martínez, J. M. (2021). *W2CWM2C: A graphical tool for wavelet (cross) correlation and wavelet multiple (cross) correlation analysis*. R package version 2.2. https://doi.org/10.32614/CRAN.package.W2CWM2C
 * Polanco-Martínez, J., & Fernández-Macho, J. (2014). The package 'W2CWM2C': Description, features and applications. *Computing in Science & Engineering*, 16(6), 68–78. https://doi.org/10.1109/MCSE.2014.96
 * Fernández-Macho, J. (2021). *wavemulcor: Wavelet routines for global and local multiple regression and correlation*. R package version 3.1.2. https://doi.org/10.32614/CRAN.package.wavemulcor
@@ -211,4 +226,9 @@ Peterson Owusu Junior is acknowledged in the W2CWM2C package documentation (`?W2
 * Gençay, R., Selçuk, F., & Whitcher, B. (2001). *An introduction to wavelets and other filtering methods in finance and economics*. Academic Press.
 * Whitcher, B., Guttorp, P., & Percival, D. B. (2000). Wavelet analysis of covariance with application to atmospheric time series. *Journal of Geophysical Research: Atmospheres*, 105(D11), 14941–14962.
 * Torrence, C., & Compo, G. P. (1998). A practical guide to wavelet analysis. *Bulletin of the American Meteorological Society*, 79, 61–78.
+* Torrence, C., & Webster, P. J. (1999). Interdecadal changes in the ENSO–monsoon system. *Journal of Climate*, 12(8), 2679–2690. (wavelet coherence)
+* Grinsted, A., Moore, J. C., & Jevrejeva, S. (2004). Application of the cross wavelet transform and wavelet coherence to geophysical time series. *Nonlinear Processes in Geophysics*, 11, 561–566. https://doi.org/10.5194/npg-11-561-2004
+* Mihanović, H., Orlić, M., & Pasarić, Z. (2009). Diurnal thermocline oscillations driven by tidal flow around an island in the Middle Adriatic. *Journal of Marine Systems*, 78, S157–S168. (partial wavelet coherence) https://doi.org/10.1016/j.jmarsys.2009.01.021
+* Ng, E. K. W., & Chan, J. C. L. (2012). Geophysical applications of partial wavelet coherence and multiple wavelet coherence. *Journal of Atmospheric and Oceanic Technology*, 29(12), 1845–1853. https://doi.org/10.1175/JTECH-D-12-00056.1
+* Aguiar-Conraria, L., & Soares, M. J. (2014). The continuous wavelet transform: Moving beyond uni- and bivariate analysis. *Journal of Economic Surveys*, 28(2), 344–375. https://doi.org/10.1111/joes.12012
 * Ramsey, J. B. (2002). Wavelets in economics and finance: Past and future. *Studies in Nonlinear Dynamics & Econometrics*, 6(3).
