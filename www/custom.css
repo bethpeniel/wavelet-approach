@@ -21,20 +21,35 @@
   --wa-ink: #1f2d3d;
 }
 
-/* header bar: the warm half of the diverging scale */
-.navbar.navbar-static-top {
-  background: linear-gradient(90deg, var(--wa-red-deep) 0%, var(--wa-red) 55%, var(--wa-red-soft) 100%);
-  color: #fff;
-  border-bottom: 3px solid var(--wa-blue);
+/* the colour bar of the correlation heatmaps (RdBu, -1 -> +1), reused everywhere */
+:root {
+  --wa-ramp: linear-gradient(90deg, var(--wa-navy) 0%, var(--wa-blue) 18%, var(--wa-blue-pale) 40%,
+                             var(--wa-grey) 50%, var(--wa-rose) 62%, var(--wa-red) 82%, var(--wa-red-deep) 100%);
+  --wa-ramp-vertical: linear-gradient(180deg, var(--wa-red-deep) 0%, var(--wa-red) 18%, var(--wa-rose) 38%,
+                             var(--wa-grey) 50%, var(--wa-blue-pale) 60%, var(--wa-blue) 82%, var(--wa-navy) 100%);
+  --wa-ramp-strong: linear-gradient(90deg, var(--wa-blue) 0%, var(--wa-red) 100%);
 }
-.navbar.navbar-static-top .navbar-brand, .navbar.navbar-static-top strong { color: #fff; }
-.navbar.navbar-static-top small.text-muted { color: rgba(255,255,255,.85) !important; }
 
-/* sidebar */
-.bslib-sidebar-layout > .sidebar { background: #fff; border-right: 1px solid #ead9d3; }
+/* header bar = the colour bar itself; the title sits on the dark blue end */
+.navbar.navbar-static-top {
+  background: var(--wa-ramp);
+  color: #fff;
+  border-bottom: 3px solid var(--wa-ink);
+}
+.navbar.navbar-static-top .navbar-brand, .navbar.navbar-static-top strong {
+  color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.35);
+}
+.navbar.navbar-static-top small.text-muted { color: rgba(255,255,255,.9) !important; text-shadow: 0 1px 2px rgba(0,0,0,.35); }
+
+/* sidebar with a vertical legend strip on its left edge */
+.bslib-sidebar-layout > .sidebar {
+  background: #fff; border-right: 1px solid #ead9d3;
+  border-left: 10px solid; border-image: var(--wa-ramp-vertical) 1;
+}
 .bslib-sidebar-layout > .sidebar .accordion-button { font-weight: 600; padding: 0.6rem 0.9rem; color: var(--wa-ink); }
 .bslib-sidebar-layout > .sidebar .accordion-button:not(.collapsed) {
-  background: var(--wa-rose-tint); color: var(--wa-red); box-shadow: inset 4px 0 0 var(--wa-red);
+  background: var(--wa-rose-tint); color: var(--wa-red);
+  border-left: 5px solid; border-image: var(--wa-ramp-vertical) 1;
 }
 .bslib-sidebar-layout > .sidebar .accordion-button:focus { box-shadow: 0 0 0 .15rem rgba(178,24,43,.25); }
 .bslib-sidebar-layout > .sidebar .form-group, .bslib-sidebar-layout > .sidebar .shiny-input-container { margin-bottom: 0.6rem; }
@@ -45,18 +60,19 @@
 .form-check-input:checked { background-color: var(--wa-red); border-color: var(--wa-red); }
 .irs--shiny .irs-bar, .irs--shiny .irs-single, .irs--shiny .irs-from, .irs--shiny .irs-to { background: var(--wa-red); border-color: var(--wa-red); }
 
-/* buttons: red = primary action, blue = secondary (the two ends of the scale) */
-.btn-primary { background: var(--wa-red); border-color: var(--wa-red); }
-.btn-primary:hover, .btn-primary:focus { background: var(--wa-red-deep); border-color: var(--wa-red-deep); }
+/* buttons: the main action wears the blue -> red ramp, secondary is blue */
+.btn-primary { background: var(--wa-ramp-strong); border: 0; text-shadow: 0 1px 1px rgba(0,0,0,.3); }
+.btn-primary:hover, .btn-primary:focus { background: linear-gradient(90deg, var(--wa-navy), var(--wa-red-deep)); border: 0; }
 .btn-outline-secondary { color: var(--wa-blue); border-color: var(--wa-blue); }
 .btn-outline-secondary:hover { background: var(--wa-blue); border-color: var(--wa-blue); color: #fff; }
 
-/* result tabs */
-.card { background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border-color: #ead9d3; }
+/* result cards carry the colour bar along their top edge */
+.card { background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border-color: #ead9d3;
+        border-top: 6px solid; border-image: var(--wa-ramp) 1; }
 .nav-underline .nav-link { font-size: 0.9rem; color: var(--wa-red); }
 .nav-underline .nav-link:hover { color: var(--wa-red-deep); }
 .nav-underline .nav-link.active, .nav-underline .show > .nav-link {
-  color: var(--wa-blue); font-weight: 600; border-bottom: 3px solid var(--wa-blue);
+  color: var(--wa-ink); font-weight: 600; border-bottom: 4px solid; border-image: var(--wa-ramp-strong) 1;
 }
 a { color: var(--wa-red); }
 a:hover { color: var(--wa-red-deep); }
@@ -68,9 +84,8 @@ a:hover { color: var(--wa-red-deep); }
 .text-warning { color: #c9731b !important; }
 
 /* progress and spinners: the full diverging ramp */
-.shiny-progress .progress-bar, .progress-bar {
-  background: linear-gradient(90deg, var(--wa-blue) 0%, var(--wa-grey) 50%, var(--wa-red) 100%);
-}
+.shiny-progress .progress-bar, .progress-bar { background: var(--wa-ramp); }
+.alert-info { border-left: 8px solid; border-image: var(--wa-ramp-vertical) 1; }
 .shiny-notification { border-left: 4px solid var(--wa-red); }
 
 /* tables */
@@ -80,4 +95,4 @@ table.dataTable.stripe tbody tr.odd { background: var(--wa-rose-pale); }
 
 /* misc */
 .navbar-brand small { font-weight: 400; }
-footer { padding: 0.5rem 0 1rem 0; border-top: 3px solid; border-image: linear-gradient(90deg, var(--wa-blue), var(--wa-grey), var(--wa-red)) 1; margin-top: 1rem; }
+footer { padding: 0.5rem 0 1rem 0; border-top: 6px solid; border-image: var(--wa-ramp) 1; margin-top: 1rem; }
