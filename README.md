@@ -113,25 +113,17 @@ To make the repository public later: `gh repo edit bethpeniel/wavelet-approach -
 
 ## Published app and embedding on your website
 
-### Posit Connect Cloud (git-backed, preferred)
+### Posit Connect Cloud (current host, git-backed)
 
-Connect Cloud builds the app directly from the public GitHub repository
+The app is live at
+**<https://01a1576a-2a57-ffbf-7f06-4a308e3389ec.share.connect.posit.cloud/>**.
+
+Connect Cloud builds it directly from the public GitHub repository
 <https://github.com/bethpeniel/wavelet-approach>; `manifest.json` (generated with
-`rsconnect::writeManifest()`) tells it which R version and packages to install.
-
-One-time setup, in the browser:
-
-1. Sign in at <https://connect.posit.cloud> with the GitHub account `bethpeniel`.
-2. Click **Publish** on the Home page and install the Posit GitHub App when prompted
-   (grant it access to `wavelet-approach`).
-3. Choose **Shiny**, pick the repository `bethpeniel/wavelet-approach`, branch `main`,
-   primary file `app.R`, keep **Automatically publish on push** enabled, and click **Publish**.
-4. When the build finishes, open **Sharing** on the content card and set it to *Anyone* (public)
-   so it can be embedded on the website; copy the `share.connect.posit.cloud` URL and paste it
-   into `APP_URL` in `open_app.html` and the iframe snippet below.
-
-After that, every `git push` to `main` republishes the app automatically. If you add an R package,
-rerun `rsconnect::writeManifest()` from the app folder and push the new `manifest.json`.
+`rsconnect::writeManifest()`) tells it which R version and packages to install. Every
+`git push` to `main` republishes the app automatically (manage it at
+<https://connect.posit.cloud>, signed in with GitHub). If you add an R package, rerun
+`rsconnect::writeManifest()` from the app folder and push the new `manifest.json`.
 
 ### shinyapps.io (previous host, still live)
 
@@ -145,7 +137,7 @@ source("C:/Users/peteo/wavelet/wavelet_app/deploy.R")
 Embed it in any web page, e.g. on positivecarryacademy.com, with:
 
 ```html
-<iframe src="https://pete-econ.shinyapps.io/wavelet_approach/"
+<iframe src="https://01a1576a-2a57-ffbf-7f06-4a308e3389ec.share.connect.posit.cloud/"
         style="width:100%; height:100vh; border:0;" loading="lazy"
         title="Wavelet Approach"></iframe>
 ```
