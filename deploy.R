@@ -6,7 +6,9 @@
 # On a new machine: shinyapps.io > Account > Tokens > Show, then run
 #   rsconnect::setAccountInfo(name = "pete-econ", token = "<TOKEN>", secret = "<SECRET>")
 # Run this script from R (source("deploy.R")) or `Rscript deploy.R`.
-# Live URL: https://pete-econ.shinyapps.io/wavelet_approach/
+# NOTE: the app now lives on Posit Connect Cloud (auto-published from GitHub);
+# the shinyapps.io copy was retired on 2026-10-20. This script only matters if
+# you want to bring the shinyapps.io copy back.
 # ---------------------------------------------------------------------------
 library(rsconnect)
 

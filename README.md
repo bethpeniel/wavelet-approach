@@ -125,14 +125,11 @@ Connect Cloud builds it directly from the public GitHub repository
 <https://connect.posit.cloud>, signed in with GitHub). If you add an R package, rerun
 `rsconnect::writeManifest()` from the app folder and push the new `manifest.json`.
 
-### shinyapps.io (previous host, still live)
+### shinyapps.io (retired)
 
-The earlier copy is at <https://pete-econ.shinyapps.io/wavelet_approach/> (account `pete-econ`).
-To update it, run `deploy.R`; to retire it, archive the app in the shinyapps.io dashboard.
-
-```r
-source("C:/Users/peteo/wavelet/wavelet_app/deploy.R")
-```
+The first deployment at `pete-econ.shinyapps.io/wavelet_approach` was terminated on 2026-10-20
+after the move to Connect Cloud. `deploy.R` is kept only as a fallback for re-publishing there
+(`source("deploy.R")` with the `pete-econ` account registered in rsconnect).
 
 Embed it in any web page, e.g. on positivecarryacademy.com, with:
 
