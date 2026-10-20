@@ -1,9 +1,76 @@
-.bslib-sidebar-layout > .sidebar .accordion-button { font-weight: 600; padding: 0.6rem 0.9rem; }
+/* ------------------------------------------------------------------
+   Wavelet Approach - colour theme matching the app's charts
+   teal   #1f6f8b  (lines, points, primary actions)
+   red    #b2182b  (positive correlation / active accent)
+   blue   #2166ac  (negative correlation / secondary accent)
+   orange #f89441  (plasma gradient / progress)
+   grey   #f7f7f7  (page background, zero-correlation mid tone)
+   ------------------------------------------------------------------ */
+:root {
+  --wa-teal: #1f6f8b;
+  --wa-teal-dark: #175a70;
+  --wa-teal-tint: #e6eff3;
+  --wa-red: #b2182b;
+  --wa-blue: #2166ac;
+  --wa-orange: #f89441;
+  --wa-grey: #f7f7f7;
+  --wa-ink: #1f2d3d;
+}
+
+/* header bar */
+.navbar.navbar-static-top {
+  background: linear-gradient(90deg, var(--wa-teal-dark) 0%, var(--wa-teal) 60%, #2a8aa8 100%);
+  color: #fff;
+  border-bottom: 3px solid var(--wa-red);
+}
+.navbar.navbar-static-top .navbar-brand, .navbar.navbar-static-top strong { color: #fff; }
+.navbar.navbar-static-top small.text-muted { color: rgba(255,255,255,.8) !important; }
+
+/* sidebar */
+.bslib-sidebar-layout > .sidebar { background: #fff; border-right: 1px solid #dfe6ea; }
+.bslib-sidebar-layout > .sidebar .accordion-button { font-weight: 600; padding: 0.6rem 0.9rem; color: var(--wa-ink); }
+.bslib-sidebar-layout > .sidebar .accordion-button:not(.collapsed) {
+  background: var(--wa-teal-tint); color: var(--wa-teal); box-shadow: none;
+}
+.bslib-sidebar-layout > .sidebar .accordion-button:focus { box-shadow: 0 0 0 .15rem rgba(31,111,139,.25); }
 .bslib-sidebar-layout > .sidebar .form-group, .bslib-sidebar-layout > .sidebar .shiny-input-container { margin-bottom: 0.6rem; }
-.bslib-sidebar-layout > .sidebar label { font-size: 0.85rem; margin-bottom: 0.15rem; }
+.bslib-sidebar-layout > .sidebar label { font-size: 0.85rem; margin-bottom: 0.15rem; color: var(--wa-ink); }
 .bslib-sidebar-layout > .sidebar .form-control, .bslib-sidebar-layout > .sidebar .form-select { font-size: 0.85rem; padding: 0.3rem 0.5rem; }
 .bslib-sidebar-layout > .sidebar .help-block, .bslib-sidebar-layout > .sidebar .shiny-help-text { font-size: 0.75rem; color: #6c757d; }
-.nav-underline .nav-link { font-size: 0.9rem; }
-.card { box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.form-control:focus, .form-select:focus { border-color: var(--wa-teal); box-shadow: 0 0 0 .2rem rgba(31,111,139,.2); }
+.form-check-input:checked { background-color: var(--wa-teal); border-color: var(--wa-teal); }
+
+/* buttons */
+.btn-primary { background: var(--wa-teal); border-color: var(--wa-teal); }
+.btn-primary:hover, .btn-primary:focus { background: var(--wa-teal-dark); border-color: var(--wa-teal-dark); }
+.btn-outline-secondary { color: var(--wa-blue); border-color: var(--wa-blue); }
+.btn-outline-secondary:hover { background: var(--wa-blue); border-color: var(--wa-blue); color: #fff; }
+
+/* result tabs */
+.card { background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border-color: #e3e8eb; }
+.nav-underline .nav-link { font-size: 0.9rem; color: var(--wa-teal); }
+.nav-underline .nav-link:hover { color: var(--wa-teal-dark); }
+.nav-underline .nav-link.active, .nav-underline .show > .nav-link {
+  color: var(--wa-red); font-weight: 600; border-bottom-color: var(--wa-red);
+}
+a { color: var(--wa-teal); }
+a:hover { color: var(--wa-teal-dark); }
+
+/* info / status */
+.alert-info { background: var(--wa-teal-tint); border-color: #c9dde6; color: var(--wa-teal-dark); }
+.alert-light { background: #fff; }
+.text-success { color: #2a9d8f !important; }
+.text-warning { color: #c9731b !important; }
+
+/* progress and spinners */
+.shiny-progress .progress-bar, .progress-bar { background-color: var(--wa-orange); }
+.shiny-notification { border-left: 4px solid var(--wa-teal); }
+
+/* tables */
+table.dataTable thead th { background: var(--wa-teal-tint); color: var(--wa-ink); border-bottom: 2px solid var(--wa-teal) !important; }
+table.dataTable.stripe tbody tr.odd { background: #fafbfc; }
+.dataTables_wrapper .dataTables_paginate .paginate_button.current { background: var(--wa-teal) !important; color: #fff !important; border-color: var(--wa-teal) !important; }
+
+/* misc */
 .navbar-brand small { font-weight: 400; }
 footer { padding: 0.5rem 0 1rem 0; }

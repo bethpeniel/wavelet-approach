@@ -61,7 +61,13 @@ plot_card <- function(id, height = "560px", ...) {
 ui <- page_sidebar(
   title = tags$span(tags$strong("Wavelet Approach"),
                     tags$small(class = "text-muted ms-2", "Bivariate & multiple wavelet analysis")),
-  theme = bs_theme(version = 5, bootswatch = "flatly", primary = "#1f6f8b",
+  # Colour theme taken from the app's own charts: steel teal lines (#1f6f8b),
+  # red/white/blue diverging correlation scale (#b2182b / #f7f7f7 / #2166ac),
+  # plasma gradient accents (#f89441) and light grey panels.
+  theme = bs_theme(version = 5,
+                   primary = "#1f6f8b", secondary = "#6c7a89", success = "#2a9d8f",
+                   info = "#2166ac", warning = "#f89441", danger = "#b2182b",
+                   bg = "#f7f7f7", fg = "#1f2d3d",
                    base_font = font_google("Source Sans 3", local = FALSE),
                    heading_font = font_google("Source Sans 3", local = FALSE)),
   tags$head(tags$link(rel = "stylesheet", href = "custom.css")),

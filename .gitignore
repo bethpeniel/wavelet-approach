@@ -8,6 +8,12 @@
 # shinyapps.io deployment metadata (contains account/app ids)
 rsconnect/
 
+# results exported from the app and unpacked into this folder
+/*.png
+/*.zip
+/transformed_data.csv
+/summary_statistics.csv
+
 # OS / editor
 Thumbs.db
 .DS_Store

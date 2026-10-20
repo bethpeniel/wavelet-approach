@@ -240,8 +240,11 @@ wlmc_calc <- function(L, M, window, J, dates) {
 
 plot_wlmc <- function(df, J, unit = "obs", title = "Wavelet local multiple correlation") {
   df$level_lab <- factor(level_labels(J, unit)[df$level], levels = level_labels(J, unit))
+  # tile width = typical spacing of observations, so weekly/monthly data draw without gaps
+  tt <- sort(unique(df$time))
+  tile_w <- if (length(tt) > 1) stats::median(diff(as.numeric(tt))) else 1
   ggplot2::ggplot(df, ggplot2::aes(time, level_lab, fill = wlmc)) +
-    ggplot2::geom_tile() +
+    ggplot2::geom_tile(width = tile_w) +
     ggplot2::scale_fill_viridis_c(limits = c(0, 1), option = "C", name = "WLMC", na.value = "grey90") +
     ggplot2::labs(x = NULL, y = "Wavelet level  [period band]", title = title,
                   subtitle = "Time-varying multiple correlation (moving window); each row is one wavelet scale") +
