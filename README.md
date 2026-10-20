@@ -113,9 +113,30 @@ To make the repository public later: `gh repo edit bethpeniel/wavelet-approach -
 
 ## Published app and embedding on your website
 
-The app is live at **<https://pete-econ.shinyapps.io/wavelet_approach/>** (shinyapps.io account
-`pete-econ`). To publish a new version after changes, run `deploy.R` (the account token is already
-registered on this machine):
+### Posit Connect Cloud (git-backed, preferred)
+
+Connect Cloud builds the app directly from the public GitHub repository
+<https://github.com/bethpeniel/wavelet-approach>; `manifest.json` (generated with
+`rsconnect::writeManifest()`) tells it which R version and packages to install.
+
+One-time setup, in the browser:
+
+1. Sign in at <https://connect.posit.cloud> with the GitHub account `bethpeniel`.
+2. Click **Publish** on the Home page and install the Posit GitHub App when prompted
+   (grant it access to `wavelet-approach`).
+3. Choose **Shiny**, pick the repository `bethpeniel/wavelet-approach`, branch `main`,
+   primary file `app.R`, keep **Automatically publish on push** enabled, and click **Publish**.
+4. When the build finishes, open **Sharing** on the content card and set it to *Anyone* (public)
+   so it can be embedded on the website; copy the `share.connect.posit.cloud` URL and paste it
+   into `APP_URL` in `open_app.html` and the iframe snippet below.
+
+After that, every `git push` to `main` republishes the app automatically. If you add an R package,
+rerun `rsconnect::writeManifest()` from the app folder and push the new `manifest.json`.
+
+### shinyapps.io (previous host, still live)
+
+The earlier copy is at <https://pete-econ.shinyapps.io/wavelet_approach/> (account `pete-econ`).
+To update it, run `deploy.R`; to retire it, archive the app in the shinyapps.io dashboard.
 
 ```r
 source("C:/Users/peteo/wavelet/wavelet_app/deploy.R")
