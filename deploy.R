@@ -2,20 +2,23 @@
 # Wavelet Approach - deployment helper. Author: Peterson Owusu Junior.
 # One-off helper: publish the app to shinyapps.io (free tier is enough to start)
 #
-# 1. Create an account at https://www.shinyapps.io and open
-#    Account > Tokens > Show, then paste the setAccountInfo() line below.
-# 2. Run this script from R (or `Rscript deploy.R`).
-# 3. Embed the resulting URL on your website with an <iframe> (see README.md).
+# Account "pete-econ" is registered on this machine (rsconnect::accounts()).
+# On a new machine: shinyapps.io > Account > Tokens > Show, then run
+#   rsconnect::setAccountInfo(name = "pete-econ", token = "<TOKEN>", secret = "<SECRET>")
+# Run this script from R (source("deploy.R")) or `Rscript deploy.R`.
+# Live URL: https://pete-econ.shinyapps.io/wavelet_approach/
 # ---------------------------------------------------------------------------
 library(rsconnect)
 
-# rsconnect::setAccountInfo(name = "<your-account>", token = "<TOKEN>", secret = "<SECRET>")
-
-app_dir <- normalizePath(dirname(if (interactive()) rstudioapi::getActiveDocumentContext()$path else sub("--file=", "", grep("--file=", commandArgs(), value = TRUE))))
+app_dir <- tryCatch(
+  normalizePath(dirname(sub("--file=", "", grep("--file=", commandArgs(), value = TRUE)[1]))),
+  error = function(e) NA)
+if (is.na(app_dir) || !file.exists(file.path(app_dir, "app.R"))) app_dir <- "C:/Users/peteo/wavelet/wavelet_app"
 
 rsconnect::deployApp(
   appDir   = app_dir,
   appName  = "wavelet_approach",
+  account  = "pete-econ",
   appFiles = c("app.R", list.files("R", full.names = TRUE), list.files("data", full.names = TRUE),
                list.files("www", full.names = TRUE)),
   forceUpdate = TRUE

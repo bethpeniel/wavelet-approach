@@ -111,25 +111,25 @@ git push
 
 To make the repository public later: `gh repo edit bethpeniel/wavelet-approach --visibility public`.
 
-## Publish and embed on your website
+## Published app and embedding on your website
 
-1. Deploy to shinyapps.io (free tier works):
+The app is live at **<https://pete-econ.shinyapps.io/wavelet_approach/>** (shinyapps.io account
+`pete-econ`). To publish a new version after changes, run `deploy.R` (the account token is already
+registered on this machine):
 
-   ```r
-   install.packages("rsconnect")
-   rsconnect::setAccountInfo(name = "<account>", token = "<token>", secret = "<secret>")
-   source("C:/Users/peteo/wavelet/wavelet_app/deploy.R")
-   ```
+```r
+source("C:/Users/peteo/wavelet/wavelet_app/deploy.R")
+```
 
-   The app is then available at `https://<account>.shinyapps.io/wavelet_approach/`.
+Embed it in any web page, e.g. on positivecarryacademy.com, with:
 
-2. Embed it in any web page:
+```html
+<iframe src="https://pete-econ.shinyapps.io/wavelet_approach/"
+        style="width:100%; height:100vh; border:0;" loading="lazy"
+        title="Wavelet Approach"></iframe>
+```
 
-   ```html
-   <iframe src="https://<account>.shinyapps.io/wavelet_approach/"
-           style="width:100%; height:100vh; border:0;" loading="lazy"
-           title="Wavelet Approach"></iframe>
-   ```
+`open_app.html` already points at the published address and can be used as-is.
 
    For WordPress, Wix, Squarespace or similar, paste that snippet into an HTML / embed block.
 
