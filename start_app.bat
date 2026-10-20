@@ -1,5 +1,5 @@
 @echo off
-rem Starts the Wavelet Approach Shiny server on port 4321 (if not already running)
+rem Starts the Bi-Partial-MultipleWavelets_Explore Shiny server on port 4321 (if not already running)
 rem and opens open_app.html in the default browser.
 set RSCRIPT="C:\Program Files\R\R-4.6.0\bin\Rscript.exe"
 set APPDIR=%~dp0

@@ -1,5 +1,5 @@
 # ---------------------------------------------------------------------------
-# Wavelet Approach - deployment helper. Author: Peterson Owusu Junior.
+# Bi-Partial-MultipleWavelets_Explore - deployment helper. Author: Peterson Owusu Junior.
 # One-off helper: publish the app to shinyapps.io (free tier is enough to start)
 #
 # Account "pete-econ" is registered on this machine (rsconnect::accounts()).

@@ -1,5 +1,5 @@
 # ===========================================================================
-# Wavelet Approach - Bivariate & Multiple Wavelet Analysis
+# Bi-Partial-MultipleWavelets_Explore - Bivariate & Multiple Wavelet Analysis
 # Author : Peterson Owusu Junior (powusujunior@gmail.com)
 # A Shiny app in the spirit of the Connectedness Approach app
 # (https://davidgabauer.shinyapps.io/connectedness_approach/)
@@ -59,7 +59,7 @@ plot_card <- function(id, height = "560px", ...) {
 # UI
 # ---------------------------------------------------------------------------
 ui <- page_sidebar(
-  title = tags$span(tags$strong("Wavelet Approach"),
+  title = tags$span(tags$strong("Bi-Partial-MultipleWavelets_Explore"),
                     tags$small(class = "text-muted ms-2", "Bivariate & multiple wavelet analysis")),
   # Colour theme taken from the app's own correlation heatmaps: the red/white/blue
   # diverging scale (#b2182b / #f7f7f7 / #2166ac) dominates; steel teal (#1f6f8b)
@@ -219,7 +219,7 @@ ui <- page_sidebar(
   ),
 
   tags$footer(class = "text-muted small mt-3",
-              HTML(sprintf('<strong>Wavelet Approach</strong> by <a href="mailto:%s">%s</a>, %s (<a href="%s" target="_blank">%s</a>). ',
+              HTML(sprintf('<strong>Bi-Partial-MultipleWavelets_Explore</strong> by <a href="mailto:%s">%s</a>, %s (<a href="%s" target="_blank">%s</a>). ',
                            APP_AUTHOR$email, APP_AUTHOR$name, APP_AUTHOR$affiliation,
                            APP_AUTHOR$website, sub("^https?://", "", sub("/$", "", APP_AUTHOR$website)))),
               "Built with R Shiny, WaveletComp, waveslim and wavemulcor. ",
@@ -574,7 +574,7 @@ write_results <- function(r, dir) {
     save_gg("wavelet_multiple_cross_correlation.png", plot_lag_heatmap(m$wmcc, "wmcc", m$J, u, "Wavelet multiple cross-correlation", side_labels = attr(m$wmcc, "max_var"), lag_unit = u))
     if (!is.null(m$wlmc)) save_gg("wavelet_local_multiple_correlation.png", plot_wlmc(m$wlmc, m$J, u))
   }
-  writeLines(c("Wavelet Approach - results export",
+  writeLines(c("Bi-Partial-MultipleWavelets_Explore - results export",
                paste0("Application by ", APP_AUTHOR$name, " (", APP_AUTHOR$affiliation, "), ", paste(APP_AUTHOR$emails, collapse = " / ")),
                paste("Generated:", format(Sys.time())),
                paste("Mode:", if (r$mode == "biv") "Bivariate (WaveletComp)" else "Multiple (MODWT)"),
@@ -597,7 +597,7 @@ about_ui <- function() {
                icon("link"), " ",
                HTML(paste(sprintf('<a href="%s" target="_blank">%s</a>', APP_AUTHOR$links, names(APP_AUTHOR$links)), collapse = " | "))),
         tags$p(class = "mb-0 small text-muted mt-2",
-               HTML(sprintf("Suggested citation: %s (%s). <em>Wavelet Approach: A Shiny application for bivariate and multiple wavelet analysis</em>. R Shiny application.",
+               HTML(sprintf("Suggested citation: %s (%s). <em>Bi-Partial-MultipleWavelets_Explore: A Shiny application for bivariate and multiple wavelet analysis</em>. R Shiny application.",
                             APP_AUTHOR$name, format(Sys.Date(), "%Y"))))),
     h4("What this app does"),
     p("This app brings together two complementary wavelet toolkits for studying co-movement between financial and economic time series across time and frequency."),
