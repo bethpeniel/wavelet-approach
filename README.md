@@ -204,10 +204,6 @@ need compiled code that is not available in the WebAssembly R build.)
 * Tetteh, J. E., & Owusu Junior, P. (2025). Co-movement between stock markets in advanced economies and Africa in times of uncertainty: A time-frequency domain approach. *PLOS ONE*, 20(11), e0334325. https://doi.org/10.1371/journal.pone.0334325
 * Woode, J. K., Idun, A. A.-A., Kawor, S., Owusu Junior, P., & Adam, A. M. (2026). Commodity imports and exports dependence, market sentiment, and pressure currencies in Sub-Saharan Africa: A time–frequency wavelet analysis. *Strategic Business Research*, 2, 100054. (bi-wavelet, partial wavelet and multiple wavelet analysis) https://doi.org/10.1016/j.sbr.2026.100054
 
-### Related applications by co-authors
-
-* Nkrumah-Boadu, B., Tweneboah, G., & Frimpong, S. (2024). On the partial impact of uncertainties on the nexus between macroeconomic fundamentals in West Africa. *Heliyon*, 10, e35976. (bi- and partial wavelet coherence) https://doi.org/10.1016/j.heliyon.2024.e35976
-
 ### Software
 
 Peterson Owusu Junior is acknowledged in the W2CWM2C package documentation (`?W2CWM2C`) for reporting bugs that were fixed in the package.

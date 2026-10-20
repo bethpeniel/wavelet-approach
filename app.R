@@ -745,10 +745,6 @@ about_ui <- function() {
     tags$ul(class = "small",
       lapply(OWUSU_REFERENCES, function(r) tags$li(r$text, if (!is.null(r$doi)) tags$a(href = paste0("https://doi.org/", r$doi), target = "_blank", paste0(" doi:", r$doi))))
     ),
-    h5("Related applications by co-authors"),
-    tags$ul(class = "small",
-      lapply(RELATED_REFERENCES, function(r) tags$li(r$text, if (!is.null(r$doi)) tags$a(href = paste0("https://doi.org/", r$doi), target = "_blank", paste0(" doi:", r$doi))))
-    ),
     h4(class = "mt-3", "Software"),
     p(class = "small text-muted", "The app wraps these R packages. Peterson Owusu Junior is acknowledged in the W2CWM2C package documentation for reporting bugs that were fixed in the package."),
     tags$ul(class = "small",
@@ -788,12 +784,6 @@ about_ui <- function() {
     )
   )
 }
-
-# Wavelet studies by Pete's co-authors that use the same toolkit (not authored by him)
-RELATED_REFERENCES <- list(
-  list(text = "Nkrumah-Boadu, B., Tweneboah, G., & Frimpong, S. (2024). On the partial impact of uncertainties on the nexus between macroeconomic fundamentals in West Africa. Heliyon, 10, e35976. (bi- and partial wavelet coherence)",
-       doi = "10.1016/j.heliyon.2024.e35976")
-)
 
 # Wavelet / time-frequency co-movement studies authored or co-authored by Peterson Owusu Junior
 OWUSU_REFERENCES <- list(
