@@ -312,7 +312,7 @@ ui <- page_sidebar(
               HTML(sprintf('<strong>Bi-Partial-MultipleWavelets_Explore</strong> by <a href="mailto:%s">%s</a>, %s (<a href="%s" target="_blank">%s</a>). ',
                            APP_AUTHOR$email, APP_AUTHOR$name, APP_AUTHOR$affiliation,
                            APP_AUTHOR$website, sub("^https?://", "", sub("/$", "", APP_AUTHOR$website)))),
-              HTML(paste0("A companion to the author's published wavelet research, including ",
+              HTML(paste0("A companion to the author's published wavelets papers and others, including ",
                           paste(vapply(FOOTER_PAPERS, function(p) sprintf('<a href="https://doi.org/%s" target="_blank">%s</a>', p$doi, p$short), ""),
                                 collapse = "; "),
                           "; the full list is on the About tab. Built with R Shiny, WaveletComp, biwavelet, waveslim and wavemulcor.")))
