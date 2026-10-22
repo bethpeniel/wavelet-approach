@@ -28,7 +28,8 @@ bivariate, partial and multiple wavelet analysis*. R Shiny application.
 | Approach | Engine | Outputs |
 |---|---|---|
 | **Bivariate wavelets** (continuous Morlet) | `WaveletComp` | wavelet power, cross-wavelet power, wavelet coherence with phase arrows, average power/coherence, phase difference (band + image), reconstruction, tables |
-| **Partial wavelet coherence** | `biwavelet` (`wtc`, `pwtc`), after Mihanović et al. 2009 and Ng & Chan 2012 | plain coherence of y with x1 and x2; PWTC(y, x1 \| x2) and PWTC(y, x2 \| x1) with Monte-Carlo significance, cone of influence and phase arrows; stacked WTC-vs-PWTC comparison; period tables |
+| **Partial wavelet coherence, one control** | `biwavelet` (`wtc`, `pwtc`), after Mihanović et al. 2009 and Ng & Chan 2012 | plain coherence of y with x1 and x2; PWTC(y, x1 \| x2) and PWTC(y, x2 \| x1) with Monte-Carlo significance, cone of influence and phase arrows; stacked WTC-vs-PWTC comparison; period tables |
+| **Multiple & partial wavelet coherence, several controls** (higher-order coherencies) | `R/higher_order_coherence.R` on top of `biwavelet`'s transform and smoothing, after Aguiar-Conraria & Soares 2014 (App. A), Ng & Chan 2012, Hu & Si 2016, 2021 | multiple wavelet coherence MWC(y \| X) for any number of predictors; complex partial wavelet coherence PWC(y, x \| X\x) for every predictor with all the others as controls (with partial phase arrows), or the classical one-control formula; AR(1) Monte-Carlo significance; stacked WTC / PWC / MWC comparison; period tables incl. mean partial phase |
 | **Multiple wavelets** (MODWT) | `waveslim`, `wavemulcor` (after Fernández-Macho 2012 / Polanco-Martínez's `W2CWM2C`) | MODWT decomposition, pairwise wavelet correlation, wavelet cross-correlation, wavelet multiple correlation (WMC), wavelet multiple cross-correlation (WMCC), wavelet local multiple correlation (WLMC), tables |
 
 Common tabs: data table, raw data, transformed data, summary statistics, and a
@@ -42,6 +43,8 @@ wavelet_app/
 ├── R/
 │   ├── data_utils.R         file reading, date parsing, transformations, summary stats
 │   ├── bivariate_wavelets.R WaveletComp wrappers (coherence, phase, reconstruction)
+│   ├── partial_wavelets.R   biwavelet wrappers (wtc, pwtc with one control) + plot helpers
+│   ├── higher_order_coherence.R  multiple wavelet coherence and partial coherence with several controls
 │   └── multiple_wavelets.R  MODWT, WC, WCC, WMC, WMCC, WLMC + ggplot2 plots
 ├── data/                    example datasets (see below)
 ├── www/custom.css
@@ -122,7 +125,19 @@ The app is built around uploading new datasets; the bundled example files only i
   Monte-Carlo test (AR(1) surrogates) costs roughly one second per draw per coherence on 1,500
   observations, so use 0 draws while exploring and 100-300 for a final figure. This reproduces the
   workflow of the `Bi_Partial_Wavelets` scripts (`wtc` of the pair, then `pwtc(y, x1, x2)` and
-  `pwtc(y, x2, x1)`).
+  `pwtc(y, x2, x1)`). Note that `biwavelet::pwtc` implements the *classical* real-coherence
+  formula; Hu & Si (2021) show it understates partial coherence relative to the complex form.
+* **Multiple & partial (several controls)**: choose `y` and two or more predictors `X`. The app
+  builds the Hermitian matrix S of smoothed cross-wavelet spectra at every time and period and
+  returns MWC(y | X) = S_yX S_XX⁻¹ S_Xy / S_yy and, for each x in X, the complex partial
+  coherence PWC(y, x | X\x) from the partial spectral matrix S_AA·Z = S_AA − S_AZ S_ZZ⁻¹ S_ZA
+  (Aguiar-Conraria & Soares 2014, eqs A1–A2; Hu & Si 2016, 2021). The *classical* option
+  reproduces Ng & Chan's (2012) one-control formula (identical to `biwavelet::pwtc`). With two
+  predictors MWC equals Ng & Chan's eq. 7. Significance: every series is replaced by AR(1)
+  surrogates, all maps are recomputed, and the chosen quantile outside the cone of influence at
+  each period is the threshold; Hu & Si recommend ≥300 draws for a final figure (≥1,000 if time
+  allows), so use 0–30 while exploring. MWC can only increase when predictors are added: use it to
+  compare predictor sets rather than as an absolute level.
 * **Multiple**: the maximum number of levels `J` depends on the sample size and filter
   (boundary coefficients are removed with a brick wall; the app clamps `J` and tells you).
   `Max lag` sets the lead/lag range for cross-correlations. The local window `M` for WLMC
@@ -239,5 +254,15 @@ Peterson Owusu Junior is acknowledged in the W2CWM2C package documentation (`?W2
 * Grinsted, A., Moore, J. C., & Jevrejeva, S. (2004). Application of the cross wavelet transform and wavelet coherence to geophysical time series. *Nonlinear Processes in Geophysics*, 11, 561–566. https://doi.org/10.5194/npg-11-561-2004
 * Mihanović, H., Orlić, M., & Pasarić, Z. (2009). Diurnal thermocline oscillations driven by tidal flow around an island in the Middle Adriatic. *Journal of Marine Systems*, 78, S157–S168. (partial wavelet coherence) https://doi.org/10.1016/j.jmarsys.2009.01.021
 * Ng, E. K. W., & Chan, J. C. L. (2012). Geophysical applications of partial wavelet coherence and multiple wavelet coherence. *Journal of Atmospheric and Oceanic Technology*, 29(12), 1845–1853. https://doi.org/10.1175/JTECH-D-12-00056.1
-* Aguiar-Conraria, L., & Soares, M. J. (2014). The continuous wavelet transform: Moving beyond uni- and bivariate analysis. *Journal of Economic Surveys*, 28(2), 344–375. https://doi.org/10.1111/joes.12012
+* Aguiar-Conraria, L., & Soares, M. J. (2014). The continuous wavelet transform: Moving beyond uni- and bivariate analysis. *Journal of Economic Surveys*, 28(2), 344–375. (Section 4 "Higher order coherencies: partial and multiple coherencies", Appendix A) https://doi.org/10.1111/joes.12012
+* Aguiar-Conraria, L., & Soares, M. J. (2018). *ASToolbox* (MATLAB, April 2018 release; `MPAWCOG` computes multiple and partial wavelet coherency). https://sites.google.com/site/aguiarconraria/joanasoares-wavelets
+* Aguiar-Conraria, L., Azevedo, N., & Soares, M. J. (2008). Using wavelets to decompose the time–frequency effects of monetary policy. *Physica A*, 387(12), 2863–2878. https://doi.org/10.1016/j.physa.2008.01.063
+* Hu, W., & Si, B. C. (2016). Technical note: Multiple wavelet coherence for untangling scale-specific and localized multivariate relationships in geosciences. *Hydrology and Earth System Sciences*, 20, 3183–3191. https://doi.org/10.5194/hess-20-3183-2016
+* Hu, W., & Si, B. (2021). Technical note: Improved partial wavelet coherency for understanding scale-specific and localized bivariate relationships in geosciences. *Hydrology and Earth System Sciences*, 25, 321–331. https://doi.org/10.5194/hess-25-321-2021 (code: https://doi.org/10.6084/m9.figshare.13031123)
+* Ng, E. K. W., & Kwok, T. W. (2012). *Wavelet package v1.0: partial wavelet coherence, multiple wavelet coherence and bias-rectified wavelet spectra* (MATLAB). City University of Hong Kong, LCCIC. https://www.cityu.edu.hk/lccic/wavelet/
+* Koopmans, L. H. (1995). *The spectral analysis of time series* (2nd ed.). Academic Press.
+* Priestley, M. B. (1981). *Spectral analysis and time series*. Academic Press.
+* Liu, Y., Liang, X. S., & Weisberg, R. H. (2007). Rectification of the bias in the wavelet power spectrum. *Journal of Atmospheric and Oceanic Technology*, 24(12), 2093–2102.
+* Veleda, D., Montagne, R., & Araújo, M. (2012). Cross-wavelet bias corrected by normalizing scales. *Journal of Atmospheric and Oceanic Technology*, 29(9), 1401–1408.
+* Dima, B., Dima, Ş. M., & Barna, F. (2015). A wavelet analysis of capital markets' integration in Latin America. *Applied Economics*, 47(10), 1019–1036. https://doi.org/10.1080/00036846.2014.987916
 * Ramsey, J. B. (2002). Wavelets in economics and finance: Past and future. *Studies in Nonlinear Dynamics & Econometrics*, 6(3).

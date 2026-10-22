@@ -5,6 +5,11 @@
 # Engines:
 #   * Bivariate  : continuous Morlet wavelet transform, cross-wavelet power,
 #                  wavelet coherence and phase difference  (WaveletComp)
+#   * Partial    : partial wavelet coherence with one control (biwavelet::pwtc,
+#                  Mihanovic et al. 2009 / Ng & Chan 2012)
+#   * Higher-order: multiple wavelet coherence and partial wavelet coherence
+#                  with several controls (R/higher_order_coherence.R, after
+#                  Aguiar-Conraria & Soares 2014, Ng & Chan 2012, Hu & Si 2016, 2021)
 #   * Multiple   : MODWT wavelet correlation, cross-correlation, wavelet
 #                  multiple (cross-)correlation and local multiple correlation
 #                  (waveslim / wavemulcor, following Fernandez-Macho 2012 and
@@ -59,6 +64,7 @@ UNIT_CHOICES <- c("Daily" = "day", "Weekly" = "week", "Monthly" = "month",
 BIV_TABS  <- c("tab_wt", "tab_xwt", "tab_coh", "tab_avg", "tab_phase", "tab_phimg", "tab_rec", "tab_bivtab")
 MULT_TABS <- c("tab_modwt", "tab_wc", "tab_wcc", "tab_wmc", "tab_wmcc", "tab_wlmc", "tab_multtab")
 PART_TABS <- c("tab_pw_wtc", "tab_pw_1", "tab_pw_2", "tab_pw_cmp", "tab_pw_tab")
+HOC_TABS  <- c("tab_ho_mwc", "tab_ho_pwc", "tab_ho_cmp", "tab_ho_tab")
 
 # One chart per card: a header that names it, optional controls, the plot, and
 # an optional reading note. full_screen gives every chart an expand button.
@@ -125,8 +131,27 @@ ui <- page_sidebar(
         "Wavelet analysis", icon = icon("wave-square"),
         radioButtons("mode", "Approach",
                      c("Bivariate wavelets (continuous Morlet)" = "biv",
-                       "Partial wavelet coherence (biwavelet)" = "part",
+                       "Partial wavelet coherence, one control (biwavelet)" = "part",
+                       "Multiple & partial wavelet coherence, several controls" = "hoc",
                        "Multiple wavelets (MODWT)" = "mult"), selected = "biv"),
+        conditionalPanel(
+          "input.mode == 'hoc'",
+          selectInput("ho_y", "Dependent variable y", choices = NULL),
+          selectizeInput("ho_x", "Predictors / controls X (2 or more)", choices = NULL, multiple = TRUE,
+                         options = list(plugins = list("remove_button"))),
+          helpText("Multiple wavelet coherence MWC(y | X) measures how much of y's wavelet variance all of X explain together. ",
+                   "Partial wavelet coherence PWC(y, x | X\\x) is computed for every x in X, controlling for all the others."),
+          radioButtons("ho_pwc_method", "Partial coherence formula", HO_PWC_METHODS, selected = "complex"),
+          layout_columns(col_widths = c(6, 6),
+                         selectInput("ho_dj", "Scale resolution (dj)", HO_DJ_CHOICES, selected = "1/12"),
+                         numericInput("ho_nrands", "Monte-Carlo draws (0 = none)", value = 30, min = 0, max = 2000, step = 10)),
+          layout_columns(col_widths = c(6, 6),
+                         numericInput("ho_siglevel", "Significance level", value = 0.95, min = 0.8, max = 0.999, step = 0.01),
+                         numericInput("ho_maxscale", "Max. period (blank = auto)", value = NA, min = 4, step = 1)),
+          checkboxInput("ho_wtc", "Also compute plain wavelet coherence of each pair for comparison", value = TRUE),
+          helpText("Each Monte-Carlo draw re-estimates every coherence map from AR(1) surrogates of all series (Hu & Si, 2016, 2021); ",
+                   "30 draws on 1,500 daily observations with three predictors take about 2-4 minutes.")
+        ),
         conditionalPanel(
           "input.mode == 'part'",
           selectInput("pw_y", "Dependent variable y", choices = NULL),
@@ -243,6 +268,22 @@ ui <- page_sidebar(
       nav_panel("Partial tables", value = "tab_pw_tab",
                 table_card("Average coherence by period (inside the cone of influence)", "pw_table")),
 
+    # ---- higher-order: multiple & partial coherence -------------------------
+      nav_panel("Multiple coherence (MWC)", value = "tab_ho_mwc",
+                plot_card("Multiple wavelet coherence of y on all predictors", "ho_mwc_plot",
+                          note = "Dark regions: at that time and period the predictors jointly explain y's wavelet variance. Adding predictors can only raise the MWC, so compare predictor sets rather than reading the level alone (Hu & Si, 2016). The thick contour marks the Monte-Carlo significance level.")),
+      nav_panel("Partial coherence (several controls)", value = "tab_ho_pwc",
+                plot_card("Partial wavelet coherence of y with one predictor, controlling for the others", "ho_pwc_plot",
+                          controls = uiOutput("ho_pwc_controls"),
+                          note = "With the complex formula the arrows show the partial phase difference (right = in phase, left = anti-phase). The classical formula has no phase information.")),
+      nav_panel("WTC vs PWC vs MWC", value = "tab_ho_cmp",
+                plot_card("Bivariate, partial and multiple coherence for one predictor", "ho_cmp_plot", "1200px",
+                          controls = uiOutput("ho_cmp_controls"),
+                          note = "Top: plain coherence of the pair. Middle: the same pair after partialling out the other predictors. Bottom: the multiple coherence of y on all predictors. Co-movement that survives in the middle panel is specific to this predictor; what fades was carried by the controls.")),
+      nav_panel("Higher-order tables", value = "tab_ho_tab",
+                table_card("Average coherence by period (inside the cone of influence)", "ho_table"),
+                table_card("Mean partial phase inside significant regions (complex formula only)", "ho_phase_table")),
+
     # ---- multiple ---------------------------------------------------------
       nav_panel("MODWT decomposition", value = "tab_modwt",
                 plot_card("MODWT decomposition", "modwt_plot", "760px", controls = uiOutput("modwt_controls"))),
@@ -325,6 +366,8 @@ server <- function(input, output, session) {
     updateSelectInput(session, "pw_y",  choices = vars, selected = vars[1])
     updateSelectInput(session, "pw_x1", choices = vars, selected = vars[min(2, length(vars))])
     updateSelectInput(session, "pw_x2", choices = vars, selected = vars[min(3, length(vars))])
+    updateSelectInput(session, "ho_y", choices = vars, selected = vars[1])
+    updateSelectizeInput(session, "ho_x", choices = vars, selected = vars[seq.int(2, min(3, length(vars)))])
     updateNumericInput(session, "J", value = min(isolate(input$J), max_levels(N, isolate(input$wf))))
   })
 
@@ -339,12 +382,13 @@ server <- function(input, output, session) {
     req(input$mode)
     for (t in BIV_TABS)  if (input$mode == "biv")  nav_show("tabs", t) else nav_hide("tabs", t)
     for (t in PART_TABS) if (input$mode == "part") nav_show("tabs", t) else nav_hide("tabs", t)
+    for (t in HOC_TABS)  if (input$mode == "hoc")  nav_show("tabs", t) else nav_hide("tabs", t)
     for (t in MULT_TABS) if (input$mode == "mult") nav_show("tabs", t) else nav_hide("tabs", t)
   }, ignoreNULL = FALSE)
 
   # After a run, jump to the first result tab of the chosen approach
   observeEvent(res(), {
-    first <- switch(res()$mode, biv = "tab_coh", part = "tab_pw_1", mult = "tab_wc")
+    first <- switch(res()$mode, biv = "tab_coh", part = "tab_pw_1", hoc = "tab_ho_mwc", mult = "tab_wc")
     nav_select("tabs", first)
   })
 
@@ -354,7 +398,7 @@ server <- function(input, output, session) {
                  h5("Get started"),
                  tags$ol(class = "mb-0",
                    tags$li(tags$b("Load data"), ": upload a csv, txt or xlsx file in the sidebar, or switch to an example dataset."),
-                   tags$li(tags$b("Choose the approach"), ": bivariate coherence, partial coherence with a control variable, or multiple wavelets."),
+                   tags$li(tags$b("Choose the approach"), ": bivariate coherence, partial coherence with one control, multiple and partial coherence with several controls, or multiple wavelets (MODWT)."),
                    tags$li(tags$b("Start analysis"), ": each result has its own tab above; Download results bundles tables and figures."))))
     r <- raw(); req(r)
     rng <- if (is.null(r$date)) "no dates" else paste(format(range(r$date)), collapse = " to ")
@@ -368,10 +412,11 @@ server <- function(input, output, session) {
   # Stat tiles summarising the last run (the numbers people look for first)
   output$run_summary <- renderUI({
     r <- res()
-    mode_lab <- switch(r$mode, biv = "Bivariate coherence", part = "Partial coherence", mult = "Multiple wavelets")
+    mode_lab <- switch(r$mode, biv = "Bivariate coherence", part = "Partial coherence", hoc = "Multiple & partial coherence", mult = "Multiple wavelets")
     detail <- switch(r$mode,
                      biv  = paste(r$biv$pair, collapse = " vs "),
                      part = sprintf("%s | %s, %s", r$part$y, r$part$x1, r$part$x2),
+                     hoc  = sprintf("%s | %s", r$hoc$y, paste(r$hoc$X, collapse = ", ")),
                      mult = sprintf("%d series, J = %d", length(r$mult$vars), r$mult$J))
     span_lab <- if (is.null(r$date)) "index 1..N" else paste(format(range(r$date), "%b %Y"), collapse = " to ")
     tile <- function(label, value, sub = NULL)
@@ -422,6 +467,21 @@ server <- function(input, output, session) {
                                 dj = eval(parse(text = input$pw_dj)), nrands = nr,
                                 sig.level = input$pw_siglevel, max.scale = input$pw_maxscale,
                                 compute_wtc = isTRUE(input$pw_wtc))
+      } else if (input$mode == "hoc") {
+        X <- intersect(input$ho_x, names(prep$data))
+        X <- setdiff(X, input$ho_y)
+        validate(need(ncol(prep$data) >= 3, "Multiple / partial wavelet coherence needs at least three variables."),
+                 need(length(X) >= 2, "Select at least two predictor / control variables different from y."),
+                 need(input$ho_pwc_method != "classical" || length(X) == 2,
+                      "The classical partial-coherence formula handles one control: select exactly two variables in X, or switch to the complex formula."))
+        nr <- max(0, as.integer(input$ho_nrands))
+        incProgress(0.05, detail = sprintf("Multiple & partial wavelet coherence (%d Monte-Carlo draws)", nr))
+        out$hoc <- run_higher_order(prep$date, prep$data, input$ho_y, X,
+                                    dj = eval(parse(text = input$ho_dj)), nrands = nr,
+                                    sig.level = input$ho_siglevel, max.scale = input$ho_maxscale,
+                                    pwc_method = input$ho_pwc_method, compute_wtc = isTRUE(input$ho_wtc),
+                                    progress = function(f) setProgress(0.15 + 0.75 * f,
+                                                                       detail = sprintf("Monte-Carlo significance: %d%%", round(100 * f))))
       } else {
         vars <- intersect(input$vars, names(prep$data))
         validate(need(length(vars) >= 2, "Please select at least two variables."))
@@ -562,6 +622,36 @@ server <- function(input, output, session) {
     datatable(partial_table(r$part), rownames = FALSE, options = list(pageLength = 15, scrollX = TRUE), class = "compact stripe")
   })
 
+  # ---- higher-order outputs ----------------------------------------------
+  hoc <- reactive({ r <- res(); validate(need(r$mode == "hoc", "Run a multiple & partial wavelet coherence analysis to see this tab.")); r })
+
+  ho_choices <- function(h) stats::setNames(seq_along(h$X), vapply(seq_along(h$X), function(k)
+    sprintf("%s ~ %s | %s", h$y, h$X[k], paste(attr(h$pwc[[k]], "controls"), collapse = ", ")), ""))
+  output$ho_pwc_controls <- renderUI({
+    r <- hoc(); radioButtons("ho_pwc_which", NULL, choices = ho_choices(r$hoc), inline = TRUE)
+  })
+  output$ho_cmp_controls <- renderUI({
+    r <- hoc(); radioButtons("ho_cmp_which", NULL, choices = ho_choices(r$hoc), inline = TRUE)
+  })
+  output$ho_mwc_plot <- renderPlot({ r <- hoc(); plot_ho_mwc(r$hoc, r$unit, r$palette) }, res = 100)
+  output$ho_pwc_plot <- renderPlot({
+    r <- hoc(); k <- as.integer(input$ho_pwc_which %||% 1); if (is.na(k) || k > length(r$hoc$X)) k <- 1
+    plot_ho_pwc(r$hoc, k, r$unit, r$palette)
+  }, res = 100)
+  output$ho_cmp_plot <- renderPlot({
+    r <- hoc(); k <- as.integer(input$ho_cmp_which %||% 1); if (is.na(k) || k > length(r$hoc$X)) k <- 1
+    plot_ho_compare(r$hoc, k, r$unit, r$palette)
+  }, res = 100)
+  output$ho_table <- renderDT({
+    r <- hoc()
+    datatable(ho_table(r$hoc), rownames = FALSE, options = list(pageLength = 15, scrollX = TRUE), class = "compact stripe")
+  })
+  output$ho_phase_table <- renderDT({
+    r <- hoc(); df <- ho_phase_table(r$hoc)
+    validate(need(!is.null(df), "Partial phase is only defined for the complex formula."))
+    datatable(df, rownames = FALSE, options = list(pageLength = 15, scrollX = TRUE), class = "compact stripe")
+  })
+
   # ---- multiple outputs --------------------------------------------------
   mult <- reactive({ r <- res(); validate(need(r$mode == "mult", "Run a multiple-wavelet analysis to see this tab.")); r })
 
@@ -696,6 +786,18 @@ write_results <- function(r, dir) {
       save_png(sprintf("wtc_vs_pwtc_%s_%s_given_%s.png", p$y, p$x1, p$x2), plot_partial_compare(p, 1, r$unit, r$palette), h = 10)
       save_png(sprintf("wtc_vs_pwtc_%s_%s_given_%s.png", p$y, p$x2, p$x1), plot_partial_compare(p, 2, r$unit, r$palette), h = 10)
     }
+  } else if (r$mode == "hoc") {
+    h <- r$hoc
+    utils::write.csv(ho_table(h), file.path(dir, "higher_order_coherence_by_period.csv"), row.names = FALSE)
+    pt <- ho_phase_table(h); if (!is.null(pt)) utils::write.csv(pt, file.path(dir, "partial_phase_by_period.csv"), row.names = FALSE)
+    utils::write.csv(ho_matrix(h$mwc, r$date), file.path(dir, sprintf("mwc_%s_given_%s_period_by_time.csv", h$y, paste(h$X, collapse = "_"))))
+    save_png(sprintf("mwc_%s_given_%s.png", h$y, paste(h$X, collapse = "_")), plot_ho_mwc(h, r$unit, r$palette))
+    for (k in seq_along(h$X)) {
+      ctrl <- paste(attr(h$pwc[[k]], "controls"), collapse = "_")
+      utils::write.csv(ho_matrix(h$pwc[[k]], r$date), file.path(dir, sprintf("pwc_%s_%s_given_%s_period_by_time.csv", h$y, h$X[k], ctrl)))
+      save_png(sprintf("pwc_%s_%s_given_%s.png", h$y, h$X[k], ctrl), plot_ho_pwc(h, k, r$unit, r$palette))
+      save_png(sprintf("wtc_pwc_mwc_%s_%s.png", h$y, h$X[k]), plot_ho_compare(h, k, r$unit, r$palette), h = if (is.null(h$wtc)) 10 else 14)
+    }
   } else {
     m <- r$mult
     utils::write.csv(m$wc, file.path(dir, "pairwise_wavelet_correlation.csv"), row.names = FALSE)
@@ -714,7 +816,16 @@ write_results <- function(r, dir) {
   writeLines(c("Bi-Partial-MultipleWavelets_Explore - results export",
                paste0("Application by ", APP_AUTHOR$name, " (", APP_AUTHOR$affiliation, "), ", paste(APP_AUTHOR$emails, collapse = " / ")),
                paste("Generated:", format(Sys.time())),
-               paste("Mode:", switch(r$mode, biv = "Bivariate (WaveletComp)", part = "Partial wavelet coherence (biwavelet)", "Multiple (MODWT)")),
+               paste("Mode:", switch(r$mode, biv = "Bivariate (WaveletComp)", part = "Partial wavelet coherence, one control (biwavelet)",
+                                     hoc = "Multiple & partial wavelet coherence, several controls", "Multiple (MODWT)")),
+               if (r$mode == "hoc") c("",
+                 "Method: multiple wavelet coherence and complex partial wavelet coherence computed from the smoothed",
+                 "cross-wavelet spectral matrix (Aguiar-Conraria & Soares 2014, Appendix A; Hu & Si 2016, 2021; Ng & Chan 2012).",
+                 "Please acknowledge in publications: 'Partial and multiple wavelet coherence software was provided by",
+                 "E. K. W. Ng and T. W. Kwok (http://www.cityu.edu.hk/lccic/wavelet), by W. Hu and B. Si (Supplement of",
+                 "Hu & Si 2016; https://doi.org/10.6084/m9.figshare.13031123), and by L. Aguiar-Conraria and M. J. Soares",
+                 "(ASToolbox, https://sites.google.com/site/aguiarconraria/joanasoares-wavelets); the R implementation",
+                 "builds on biwavelet (Gouhier, Grinsted & Simko) and the wavelet-coherence code of A. Grinsted.'"),
                paste("Transformation:", r$transform), paste("Observations:", nrow(r$data))),
              file.path(dir, "README.txt"))
 }
@@ -737,9 +848,48 @@ about_ui <- function() {
                HTML(sprintf("Suggested citation: %s (%s). <em>Bi-Partial-MultipleWavelets_Explore: A Shiny application for bivariate, partial and multiple wavelet analysis</em>. R Shiny application.",
                             APP_AUTHOR$name, format(Sys.Date(), "%Y"))))),
     h4("What this app does"),
-    p("This app brings together two complementary wavelet toolkits for studying co-movement between financial and economic time series across time and frequency."),
+    p("This app brings together complementary wavelet toolkits for studying co-movement between financial and economic time series across time and frequency: bivariate coherence, partial coherence with one or several controls, multiple wavelet coherence, and MODWT-based multiple correlation."),
     layout_columns(
-      col_widths = c(4, 4, 4),
+      col_widths = c(6, 6),
+      card(card_header("Multiple & partial wavelet coherence with several controls (higher-order coherencies)"),
+           card_body(
+             p("Ordinary wavelet coherence is bivariate. Following the Fourier-domain concepts of multiple and partial coherency (Koopmans, 1995; Priestley, 1981), ",
+               "Aguiar-Conraria & Soares (2014, Section 4 and Appendix A) and Ng & Chan (2012) carried them to the time-frequency plane, and Hu & Si (2016, 2021) ",
+               "gave the general matrix forms with Monte-Carlo significance. All quantities come from the Hermitian matrix S of smoothed (cross-)wavelet spectra at each time and period:"),
+             tags$ul(
+               tags$li(tags$b("Multiple wavelet coherence MWC(y | X)"), ": the share of y's wavelet variance explained jointly by all predictors X, ",
+                       "R² = S", tags$sub("yX"), " S", tags$sub("XX"), tags$sup("-1"), " S", tags$sub("Xy"), " / S", tags$sub("yy"),
+                       " (akin to the squared multiple correlation). With two predictors it reduces to Ng & Chan's (2012) eq. 7. Adding predictors never lowers it, so use it to compare predictor sets."),
+               tags$li(tags$b("Partial wavelet coherence PWC(y, x | Z)"), ": the coherence of y with one predictor x after removing every other selected variable Z, ",
+                       "computed from the partial spectral matrix S", tags$sub("AA·Z"), " = S", tags$sub("AA"), " - S", tags$sub("AZ"), " S", tags$sub("ZZ"), tags$sup("-1"), " S", tags$sub("ZA"),
+                       " (akin to partial correlation). The ", tags$b("complex formula"), " (Aguiar-Conraria & Soares 2014, eq. A2; Hu & Si 2021, eq. 1) keeps the phase, so arrows show the partial lead-lag; ",
+                       "the ", tags$b("classical formula"), " (Mihanovic et al. 2009 as coded by Ng & Chan 2012, and in biwavelet) uses real coherences, handles one control and has no phase. Hu & Si (2021) show it understates the partial coherence unless the two complex terms are collinear."),
+               tags$li(tags$b("Significance"), ": AR(1) surrogates of every series are drawn, each map is recomputed, and the chosen quantile of the values outside the cone of influence at each period is the threshold (Grinsted et al. 2004; Hu & Si 2016, 2021: about 300 draws are enough; 1,000 recommended when time allows)."),
+               tags$li(tags$b("Tabs"), ": the MWC map; a PWC map for each predictor with the others as controls; a stacked WTC / PWC / MWC comparison; and tables of average coherence, share of significant area and mean partial phase by period.")
+             ),
+             p(class = "small text-muted",
+               "Source acknowledgement: partial and multiple wavelet coherence software was provided by E. K. W. Ng and T. W. Kwok (City University of Hong Kong, ",
+               tags$a(href = "https://www.cityu.edu.hk/lccic/wavelet/", target = "_blank", "cityu.edu.hk/lccic/wavelet"), "), by W. Hu and B. Si (Supplement of Hu & Si 2016 and ",
+               tags$a(href = "https://doi.org/10.6084/m9.figshare.13031123", target = "_blank", "figshare"), "), and by L. Aguiar-Conraria and M. J. Soares (ASToolbox, ",
+               tags$a(href = "https://sites.google.com/site/aguiarconraria/joanasoares-wavelets", target = "_blank", "ASToolbox"), "). ",
+               "This R implementation re-derives their formulas on top of biwavelet's wavelet transform and smoothing, which in turn follow Torrence & Compo (1998) and A. Grinsted's wavelet-coherence package.")
+           )),
+      card(card_header("Partial wavelet coherence, one control (biwavelet)"),
+           card_body(
+             p("Ordinary wavelet coherence between y and x1 can be inflated by a third variable that drives both. ",
+               "Partial wavelet coherence, PWTC(y, x1 | x2), removes the influence of x2 and shows the co-movement that remains, ",
+               "in the same time-frequency plane (Mihanovic et al., 2009; Ng & Chan, 2012). This mode calls biwavelet::pwtc, i.e. the classical real-coherence formula."),
+             tags$ul(
+               tags$li(tags$b("Wavelet coherence (pairs)"), ": the plain coherence of y with x1 and with x2, for reference."),
+               tags$li(tags$b("Partial coherence y~x1 | x2"), " and ", tags$b("y~x2 | x1"), ": the two conditional coherences, each with the significance contour, cone of influence and phase arrows (the arrows are the plain cross-wavelet phase)."),
+               tags$li(tags$b("WTC vs PWTC"), ": the pair's coherence before and after conditioning, stacked for direct comparison."),
+               tags$li(tags$b("Tables"), ": average coherence and partial coherence by period, and the share of time each is significant.")
+             ),
+             p(class = "small text-muted", "Significance comes from a Monte-Carlo test against AR(1) surrogates (biwavelet); set the number of draws to 0 to skip it when exploring. For several controls, or for partial phase information, use the higher-order mode.")
+           ))
+    ),
+    layout_columns(
+      col_widths = c(6, 6),
       card(card_header("Bivariate wavelets (continuous Morlet transform)"),
            card_body(
              tags$ul(
@@ -751,19 +901,6 @@ about_ui <- function() {
                tags$li(tags$b("Reconstruction"), " of each series from its significant wavelet components.")
              ),
              p(class = "small text-muted", "Significance is assessed by simulation against a chosen null (white noise, shuffling, Fourier randomisation, AR(1) or ARIMA). The cone of influence marks edge-affected regions.")
-           )),
-      card(card_header("Partial wavelet coherence (biwavelet)"),
-           card_body(
-             p("Ordinary wavelet coherence between y and x1 can be inflated by a third variable that drives both. ",
-               "Partial wavelet coherence, PWTC(y, x1 | x2), removes the influence of x2 and shows the co-movement that remains, ",
-               "in the same time-frequency plane (Mihanovic et al., 2009; Ng & Chan, 2012)."),
-             tags$ul(
-               tags$li(tags$b("Wavelet coherence (pairs)"), ": the plain coherence of y with x1 and with x2, for reference."),
-               tags$li(tags$b("Partial coherence y~x1 | x2"), " and ", tags$b("y~x2 | x1"), ": the two conditional coherences, each with the significance contour, cone of influence and phase arrows."),
-               tags$li(tags$b("WTC vs PWTC"), ": the pair's coherence before and after conditioning, stacked for direct comparison."),
-               tags$li(tags$b("Tables"), ": average coherence and partial coherence by period, and the share of time each is significant.")
-             ),
-             p(class = "small text-muted", "Significance comes from a Monte-Carlo test against AR(1) surrogates (biwavelet); set the number of draws to 0 to skip it when exploring.")
            )),
       card(card_header("Multiple wavelets (MODWT)"),
            card_body(
@@ -823,8 +960,25 @@ about_ui <- function() {
               tags$a(href = "https://doi.org/10.1016/j.jmarsys.2009.01.021", target = "_blank", "doi:10.1016/j.jmarsys.2009.01.021")),
       tags$li("Ng, E. K. W., & Chan, J. C. L. (2012). Geophysical applications of partial wavelet coherence and multiple wavelet coherence. Journal of Atmospheric and Oceanic Technology, 29(12), 1845-1853. ",
               tags$a(href = "https://doi.org/10.1175/JTECH-D-12-00056.1", target = "_blank", "doi:10.1175/JTECH-D-12-00056.1")),
-      tags$li("Aguiar-Conraria, L., & Soares, M. J. (2014). The continuous wavelet transform: Moving beyond uni- and bivariate analysis. Journal of Economic Surveys, 28(2), 344-375. ",
+      tags$li("Aguiar-Conraria, L., & Soares, M. J. (2014). The continuous wavelet transform: Moving beyond uni- and bivariate analysis. Journal of Economic Surveys, 28(2), 344-375. (Section 4 'Higher order coherencies: partial and multiple coherencies' and Appendix A) ",
               tags$a(href = "https://doi.org/10.1111/joes.12012", target = "_blank", "doi:10.1111/joes.12012")),
+      tags$li("Aguiar-Conraria, L., & Soares, M. J. (2018). ASToolbox: Wavelet tools for economists (MATLAB toolbox, version April 2018, with the function MPAWCOG for multiple and partial wavelet coherency). ",
+              tags$a(href = "https://sites.google.com/site/aguiarconraria/joanasoares-wavelets", target = "_blank", "ASToolbox")),
+      tags$li("Aguiar-Conraria, L., Azevedo, N., & Soares, M. J. (2008). Using wavelets to decompose the time-frequency effects of monetary policy. Physica A, 387(12), 2863-2878. ",
+              tags$a(href = "https://doi.org/10.1016/j.physa.2008.01.063", target = "_blank", "doi:10.1016/j.physa.2008.01.063")),
+      tags$li("Hu, W., & Si, B. C. (2016). Technical note: Multiple wavelet coherence for untangling scale-specific and localized multivariate relationships in geosciences. Hydrology and Earth System Sciences, 20, 3183-3191. ",
+              tags$a(href = "https://doi.org/10.5194/hess-20-3183-2016", target = "_blank", "doi:10.5194/hess-20-3183-2016")),
+      tags$li("Hu, W., & Si, B. (2021). Technical note: Improved partial wavelet coherency for understanding scale-specific and localized bivariate relationships in geosciences. Hydrology and Earth System Sciences, 25, 321-331. ",
+              tags$a(href = "https://doi.org/10.5194/hess-25-321-2021", target = "_blank", "doi:10.5194/hess-25-321-2021"), " | code: ",
+              tags$a(href = "https://doi.org/10.6084/m9.figshare.13031123", target = "_blank", "figshare")),
+      tags$li("Ng, E. K. W., & Kwok, T. W. (2012). Wavelet package v1.0: Partial wavelet coherence, multiple wavelet coherence and bias-rectified wavelet spectra (MATLAB). City University of Hong Kong, Low-Carbon and Climate Impact Research Centre. ",
+              tags$a(href = "https://www.cityu.edu.hk/lccic/wavelet/", target = "_blank", "cityu.edu.hk/lccic/wavelet")),
+      tags$li("Koopmans, L. H. (1995). The spectral analysis of time series (2nd ed.). Academic Press. (multivariate partial and multiple coherency)"),
+      tags$li("Priestley, M. B. (1981). Spectral analysis and time series. Academic Press."),
+      tags$li("Liu, Y., Liang, X. S., & Weisberg, R. H. (2007). Rectification of the bias in the wavelet power spectrum. Journal of Atmospheric and Oceanic Technology, 24(12), 2093-2102."),
+      tags$li("Veleda, D., Montagne, R., & Araujo, M. (2012). Cross-wavelet bias corrected by normalizing scales. Journal of Atmospheric and Oceanic Technology, 29(9), 1401-1408."),
+      tags$li("Dima, B., Dima, S. M., & Barna, F. (2015). A wavelet analysis of capital markets' integration in Latin America. Applied Economics, 47(10), 1019-1036. ",
+              tags$a(href = "https://doi.org/10.1080/00036846.2014.987916", target = "_blank", "doi:10.1080/00036846.2014.987916")),
       tags$li("Ramsey, J. B. (2002). Wavelets in economics and finance: Past and future. Studies in Nonlinear Dynamics & Econometrics, 6(3).")
     )
   )
