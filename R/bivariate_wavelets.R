@@ -35,33 +35,30 @@ run_coherency <- function(dates, vals, pair, dj = 1/20, lowerPeriod = 2, upperPe
 .leg <- function(lab) list(lab = lab, mar = 5.1, label.digits = 2, n.ticks = 6)
 
 plot_wt_power <- function(b, series, unit, siglvl = 0.05, palette = "blue") {
-  op <- title_par(); on.exit(graphics::par(op), add = TRUE)
   WaveletComp::wt.image(b$wc, my.series = series, color.key = "interval", siglvl = siglvl,
                         color.palette = wc_palette_string(palette), col.contour = WA_COLORS$ink,
                         legend.params = .leg("wavelet power levels"),
-                        main = fit_main(paste("Wavelet power spectrum:", series)),
+                        main = paste("Wavelet power spectrum:", series),
                         show.date = b$show_date, date.format = "%F",
                         timelab = "Time", periodlab = paste0("Period (", unit_plural(unit), ")"),
                         graphics.reset = TRUE)
 }
 
 plot_cross_power <- function(b, unit, siglvl = 0.05, palette = "blue") {
-  op <- title_par(); on.exit(graphics::par(op), add = TRUE)
   WaveletComp::wc.image(b$wc, which.image = "wp", color.key = "interval", siglvl.arrow = siglvl,
                         siglvl.contour = siglvl, legend.params = .leg("cross-wavelet power levels"),
                         color.palette = wc_palette_string(palette), col.contour = WA_COLORS$ink,
-                        main = fit_main(paste("Cross-wavelet power:", b$pair[1], "and", b$pair[2])),
+                        main = paste("Cross-wavelet power:", b$pair[1], "and", b$pair[2]),
                         show.date = b$show_date, date.format = "%F",
                         timelab = "Time", periodlab = paste0("Period (", unit_plural(unit), ")"),
                         graphics.reset = TRUE)
 }
 
 plot_coherence <- function(b, unit, siglvl = 0.05, palette = "blue") {
-  op <- title_par(); on.exit(graphics::par(op), add = TRUE)
   WaveletComp::wc.image(b$wc, which.image = "wc", color.key = "interval", siglvl.arrow = siglvl,
                         siglvl.contour = siglvl, legend.params = .leg("wavelet coherence levels"),
                         color.palette = wc_palette_string(palette), col.contour = WA_COLORS$ink,
-                        main = fit_main(paste("Wavelet coherence:", b$pair[1], "and", b$pair[2])),
+                        main = paste("Wavelet coherence:", b$pair[1], "and", b$pair[2]),
                         show.date = b$show_date, date.format = "%F",
                         timelab = "Time", periodlab = paste0("Period (", unit_plural(unit), ")"),
                         graphics.reset = TRUE)
@@ -69,42 +66,38 @@ plot_coherence <- function(b, unit, siglvl = 0.05, palette = "blue") {
 
 plot_avg <- function(b, which = "wc", unit) {
   lab <- if (which == "wc") "average coherence" else "average cross-wavelet power"
-  op <- title_par(); on.exit(graphics::par(op), add = TRUE)
   WaveletComp::wc.avg(b$wc, which.avg = which, siglvl = c(0.05, 0.1), sigpch = 20,
                       sigcol = c(WA_COLORS$div_high, WA_COLORS$series), col = WA_COLORS$ink2, lwd = 1.5,
-                      main = fit_main(paste0(toupper(substr(lab, 1, 1)), substr(lab, 2, nchar(lab)), ": ",
-                                             b$pair[1], " and ", b$pair[2]), frac = 0.9),
+                      main = paste0(toupper(substr(lab, 1, 1)), substr(lab, 2, nchar(lab)), ": ",
+                                    b$pair[1], " and ", b$pair[2]),
                       averagelab = lab, periodlab = paste0("Period (", unit_plural(unit), ")"))
 }
 
 plot_phase <- function(b, lower, upper, siglvl = 0.05, which.sig = "wc") {
-  op <- title_par(); on.exit(graphics::par(op), add = TRUE)
   WaveletComp::wc.sel.phases(b$wc, sel.lower = lower, sel.upper = upper, only.sig = b$make_pval,
                              which.sig = which.sig, siglvl = siglvl, legend.coords = "topright",
                              phase.cols = c(WA_COLORS$div_high, WA_COLORS$series), Angle.col = WA_COLORS$ink,
                              legend.horiz = FALSE, phaselim = c(-pi, pi),
-                             main = fit_main(sprintf("Phase difference %s vs %s, periods %s-%s", b$pair[1], b$pair[2],
-                                                     format(round(lower, 1)), format(round(upper, 1))), frac = 0.9),
+                             main = sprintf("Phase difference %s vs %s, periods %s-%s", b$pair[1], b$pair[2],
+                                            format(round(lower, 1)), format(round(upper, 1))),
                              sub = "", show.date = b$show_date, date.format = "%F", timelab = "Time")
 }
 
 plot_phasediff_image <- function(b, unit, siglvl = 0.05, palette = "blue") {
-  op <- title_par(); on.exit(graphics::par(op), add = TRUE)
   WaveletComp::wc.phasediff.image(b$wc, which.contour = "wc", siglvl = siglvl,
                                   color.palette = wc_palette_string(palette, diverging = TRUE), col.contour = WA_COLORS$ink,
                                   legend.params = list(lab = "phase difference levels", mar = 5.1),
-                                  main = fit_main(paste("Phase difference:", b$pair[1], "and", b$pair[2])),
+                                  main = paste("Phase difference:", b$pair[1], "and", b$pair[2]),
                                   show.date = b$show_date, date.format = "%F",
                                   timelab = "Time", periodlab = paste0("Period (", unit_plural(unit), ")"),
                                   graphics.reset = TRUE)
 }
 
 plot_reconstruct <- function(b, series, siglvl = 0.05, waves = FALSE) {
-  op <- title_par(); on.exit(graphics::par(op), add = TRUE)
   WaveletComp::reconstruct(b$wc, my.series = series, only.sig = b$make_pval, siglvl = siglvl,
                            plot.waves = waves, plot.rec = !waves, lwd = c(1, 2), col = c(WA_COLORS$muted, WA_COLORS$series),
                            legend.coords = "topleft",
-                           main = fit_main(paste(if (waves) "Significant waves:" else "Reconstruction:", series), frac = 0.9),
+                           main = paste(if (waves) "Significant waves:" else "Reconstruction:", series),
                            show.date = b$show_date, date.format = "%F", timelab = "Time", verbose = FALSE)
 }
 

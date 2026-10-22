@@ -51,12 +51,12 @@ run_partial <- function(dates, vals, y, x1, x2, dj = 1/12, nrands = 50, sig.leve
 }
 
 plot_biwavelet <- function(obj, dates, unit = "observation", title = "", plot.phase = TRUE, plot.sig = TRUE, palette = "blue") {
-  op <- graphics::par(oma = c(0, 0, 0, 1), mar = c(5, 4.5, 4.5, 5) + 0.1, cex.main = 1.0)
+  op <- graphics::par(oma = c(0, 0, 0, 1), mar = c(5, 4.5, 4, 5) + 0.1)
   on.exit(graphics::par(op), add = TRUE)
   graphics::plot(obj, plot.phase = plot.phase, plot.sig = plot.sig, lty.coi = 1, col.coi = "grey", lwd.coi = 2,
                  lwd.sig = 2, arrow.lwd = 0.03, arrow.len = 0.12, plot.cb = TRUE, fill.cols = seq_ramp(64, palette),
                  col.sig = WA_COLORS$ink,
-                 ylab = paste0("Period (", unit_plural(unit), ")"), xlab = "Time", main = fit_main(title), xaxt = "n")
+                 ylab = paste0("Period (", unit_plural(unit), ")"), xlab = "Time", main = title, xaxt = "n")
   .pw_time_axis(dates, length(obj$t))
   invisible()
 }
@@ -81,17 +81,17 @@ plot_partial_compare <- function(p, which = 1, unit = "observation", palette = "
   pobj <- if (which == 1) p$pwtc_y_x1 else p$pwtc_y_x2
   other <- if (which == 1) p$x1 else p$x2
   ctrl  <- if (which == 1) p$x2 else p$x1
-  op <- graphics::par(mfrow = c(2, 1), oma = c(0, 0, 0, 1), mar = c(4, 4.5, 3.5, 5) + 0.1, cex.main = 1.0)
+  op <- graphics::par(mfrow = c(2, 1), oma = c(0, 0, 0, 1), mar = c(4, 4.5, 3, 5) + 0.1)
   on.exit(graphics::par(op), add = TRUE)
   graphics::plot(obj, plot.phase = TRUE, lty.coi = 1, col.coi = "grey", lwd.coi = 2, lwd.sig = 2,
                  arrow.lwd = 0.03, arrow.len = 0.1, plot.cb = TRUE, xaxt = "n", fill.cols = seq_ramp(64, palette), col.sig = WA_COLORS$ink,
                  ylab = paste0("Period (", unit_plural(unit), ")"), xlab = "",
-                 main = fit_main(sprintf("Wavelet coherence: %s and %s", p$y, other)))
+                 main = sprintf("Wavelet coherence: %s and %s", p$y, other))
   .pw_time_axis(p$dates, length(obj$t))
   graphics::plot(pobj, plot.phase = TRUE, lty.coi = 1, col.coi = "grey", lwd.coi = 2, lwd.sig = 2,
                  arrow.lwd = 0.03, arrow.len = 0.1, plot.cb = TRUE, xaxt = "n", fill.cols = seq_ramp(64, palette), col.sig = WA_COLORS$ink,
                  ylab = paste0("Period (", unit_plural(unit), ")"), xlab = "Time",
-                 main = fit_main(sprintf("Partial wavelet coherence: %s ~ %s | %s", p$y, other, ctrl)))
+                 main = sprintf("Partial wavelet coherence: %s ~ %s | %s", p$y, other, ctrl))
   .pw_time_axis(p$dates, length(pobj$t))
   invisible()
 }

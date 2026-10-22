@@ -268,42 +268,9 @@ plot_series <- function(dates, vals, title = NULL) {
   ggplot2::ggplot(long, ggplot2::aes(x = time, y = value)) +
     ggplot2::geom_line(colour = WA_COLORS$series, linewidth = 0.45) +
     ggplot2::facet_wrap(~variable, scales = "free_y", ncol = 2) +
-    wa_labs(x = NULL, y = NULL, title = title) +
+    ggplot2::labs(x = NULL, y = NULL, title = title) +
     app_theme()
 }
-
-# ---------------------------------------------------------------------------
-# Figure headings: keep titles inside the figure width.
-#   wa_labs()  - ggplot2::labs() with title/subtitle wrapped to a character
-#                budget that fits the app's plot widths at the theme's sizes
-#   fit_main() - base-R equivalent: wraps a `main` string to the open device's
-#                width (minus the colour legend) using the current cex.main
-# ---------------------------------------------------------------------------
-TITLE_CHARS    <- 72    # ~6.5 in at 12pt bold
-SUBTITLE_CHARS <- 96    # ~6.5 in at 10pt
-
-wrap_lab <- function(x, chars) {
-  if (is.null(x) || is.na(x) || !nzchar(x)) return(x)
-  paste(strwrap(x, width = chars), collapse = "\n")
-}
-
-wa_labs <- function(..., title = ggplot2::waiver(), subtitle = ggplot2::waiver()) {
-  if (!inherits(title, "waiver"))    title    <- wrap_lab(title, TITLE_CHARS)
-  if (!inherits(subtitle, "waiver")) subtitle <- wrap_lab(subtitle, SUBTITLE_CHARS)
-  ggplot2::labs(..., title = title, subtitle = subtitle)
-}
-
-fit_main <- function(x, frac = 0.72, cex = NULL) {
-  if (is.null(x) || !nzchar(x)) return(x)
-  if (is.null(cex)) cex <- graphics::par("cex.main")
-  dev_w <- tryCatch(grDevices::dev.size("in")[1], error = function(e) 7)
-  char_w <- 0.55 * graphics::par("cin")[1] * cex          # average glyph width, inches
-  chars <- max(20, floor(dev_w * frac / char_w))
-  paste(strwrap(x, width = chars), collapse = "\n")
-}
-
-# smaller base-R title and enough top margin for a wrapped (two-line) one
-title_par <- function(lines = 2) graphics::par(cex.main = 1.0, mar = c(5.1, 4.1, 2.2 + 1.3 * lines, 2.1))
 
 app_theme <- function() {
   ggplot2::theme_minimal(base_size = 13) +
@@ -314,8 +281,8 @@ app_theme <- function() {
                    axis.text = ggplot2::element_text(colour = WA_COLORS$ink2),
                    axis.title = ggplot2::element_text(colour = WA_COLORS$ink2),
                    strip.text = ggplot2::element_text(face = "bold", colour = WA_COLORS$ink),
-                   plot.title = ggplot2::element_text(face = "bold", colour = WA_COLORS$ink, size = 12, lineheight = 1.05),
-                   plot.subtitle = ggplot2::element_text(colour = WA_COLORS$ink2, size = 10, lineheight = 1.05),
+                   plot.title = ggplot2::element_text(face = "bold", colour = WA_COLORS$ink),
+                   plot.subtitle = ggplot2::element_text(colour = WA_COLORS$ink2),
                    plot.title.position = "plot",
                    legend.position = "right",
                    legend.title = ggplot2::element_text(colour = WA_COLORS$ink2),
