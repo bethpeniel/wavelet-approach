@@ -202,19 +202,16 @@ ui <- page_sidebar(
   uiOutput("data_info"),
   uiOutput("run_summary"),
 
-  # Results: one menu per stage so the tab strip stays short; the two approach
-  # menus that are not selected are hidden by the server.
+  # Results: every tab visible in one strip (data tabs always; the tabs of the
+  # two approaches that are not selected are hidden by the server).
   navset_underline(
     id = "tabs",
-    nav_menu("Data", value = "menu_data", icon = icon("table"),
       nav_panel("Data table", value = "tab_data", table_card("Loaded data", "data_table")),
       nav_panel("Raw data", value = "tab_raw", plot_card("Raw series", "raw_plot", "620px")),
       nav_panel("Transformed data", value = "tab_trans", plot_card("Series as analysed", "trans_plot", "620px")),
-      nav_panel("Summary statistics", value = "tab_stats", table_card("Summary statistics of the analysed series", "stats_table"))
-    ),
+      nav_panel("Summary statistics", value = "tab_stats", table_card("Summary statistics of the analysed series", "stats_table")),
 
     # ---- bivariate --------------------------------------------------------
-    nav_menu("Bivariate", value = "menu_biv", icon = icon("wave-square"),
       nav_panel("Wavelet power", value = "tab_wt",
                 plot_card("Wavelet power spectrum", "wt_plot", controls = uiOutput("wt_series_ui"))),
       nav_panel("Cross-wavelet power", value = "tab_xwt", plot_card("Cross-wavelet power", "xwt_plot")),
@@ -233,11 +230,9 @@ ui <- page_sidebar(
                 plot_card("Reconstruction from significant components", "rec_plot", "520px", controls = uiOutput("rec_controls"))),
       nav_panel("Tables", value = "tab_bivtab",
                 table_card("Average cross-wavelet power and coherence by period", "coh_table"),
-                table_card("Phase summary inside significant coherence regions", "phase_table"))
-    ),
+                table_card("Phase summary inside significant coherence regions", "phase_table")),
 
     # ---- partial ----------------------------------------------------------
-    nav_menu("Partial", value = "menu_part", icon = icon("diagram-project"),
       nav_panel("Wavelet coherence (pairs)", value = "tab_pw_wtc",
                 plot_card("Wavelet coherence of each pair", "pw_wtc_plot", controls = uiOutput("pw_wtc_controls"))),
       nav_panel("Partial coherence y~x1 | x2", value = "tab_pw_1", plot_card("Partial wavelet coherence, y ~ x1 | x2", "pw_plot1")),
@@ -245,12 +240,10 @@ ui <- page_sidebar(
       nav_panel("WTC vs PWTC", value = "tab_pw_cmp",
                 plot_card("Coherence before and after conditioning", "pw_cmp_plot", "900px", controls = uiOutput("pw_cmp_controls"),
                           note = "Top: ordinary wavelet coherence of the pair. Bottom: the same pair after partialling out the control variable. Regions that stay dark in the bottom panel are co-movements not explained by the control; regions that fade were driven by it.")),
-      nav_panel("Tables", value = "tab_pw_tab",
-                table_card("Average coherence by period (inside the cone of influence)", "pw_table"))
-    ),
+      nav_panel("Partial tables", value = "tab_pw_tab",
+                table_card("Average coherence by period (inside the cone of influence)", "pw_table")),
 
     # ---- multiple ---------------------------------------------------------
-    nav_menu("Multiple", value = "menu_mult", icon = icon("layer-group"),
       nav_panel("MODWT decomposition", value = "tab_modwt",
                 plot_card("MODWT decomposition", "modwt_plot", "760px", controls = uiOutput("modwt_controls"))),
       nav_panel("Wavelet correlation", value = "tab_wc",
@@ -268,8 +261,7 @@ ui <- page_sidebar(
       nav_panel("Tables", value = "tab_multtab",
                 table_card("Wavelet multiple correlation", "wmc_table"),
                 table_card("Pairwise wavelet correlation", "wc_table"),
-                table_card("Wavelet multiple cross-correlation", "wmcc_table"))
-    ),
+                table_card("Wavelet multiple cross-correlation", "wmcc_table")),
 
     nav_spacer(),
     nav_panel("About", value = "tab_about", icon = icon("circle-info"), uiOutput("about"))
@@ -345,8 +337,9 @@ server <- function(input, output, session) {
   # ---- tab visibility ----------------------------------------------------
   observeEvent(input$mode, {
     req(input$mode)
-    menus <- c(biv = "menu_biv", part = "menu_part", mult = "menu_mult")
-    for (m in names(menus)) if (input$mode == m) nav_show("tabs", menus[[m]]) else nav_hide("tabs", menus[[m]])
+    for (t in BIV_TABS)  if (input$mode == "biv")  nav_show("tabs", t) else nav_hide("tabs", t)
+    for (t in PART_TABS) if (input$mode == "part") nav_show("tabs", t) else nav_hide("tabs", t)
+    for (t in MULT_TABS) if (input$mode == "mult") nav_show("tabs", t) else nav_hide("tabs", t)
   }, ignoreNULL = FALSE)
 
   # After a run, jump to the first result tab of the chosen approach
@@ -362,7 +355,7 @@ server <- function(input, output, session) {
                  tags$ol(class = "mb-0",
                    tags$li(tags$b("Load data"), ": upload a csv, txt or xlsx file in the sidebar, or switch to an example dataset."),
                    tags$li(tags$b("Choose the approach"), ": bivariate coherence, partial coherence with a control variable, or multiple wavelets."),
-                   tags$li(tags$b("Start analysis"), ": results open under the Bivariate, Partial or Multiple menu; Download results bundles tables and figures."))))
+                   tags$li(tags$b("Start analysis"), ": each result has its own tab above; Download results bundles tables and figures."))))
     r <- raw(); req(r)
     rng <- if (is.null(r$date)) "no dates" else paste(format(range(r$date)), collapse = " to ")
     div(class = "dataset-strip",

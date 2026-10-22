@@ -82,8 +82,8 @@ the `APP_URL` constant at the top of the file to the published address.
 ## Design
 
 * **Layout**: settings in a collapsible sidebar with the primary action pinned at the bottom;
-  results grouped under Data / Bivariate / Partial / Multiple menus (only the chosen approach's
-  menu is shown); every chart in its own card with a title, an expand button and a reading note;
+  one visible tab per result (data tabs always shown, plus the tabs of the chosen approach);
+  every chart in its own card with a title, an expand button and a reading note;
   stat tiles summarise each run; tables accompany every chart family.
 * **Colour**: neutral interface with a single blue accent, so colour is reserved for the data.
   Magnitudes (power, coherence, local correlation) use one hue from light to dark; signed

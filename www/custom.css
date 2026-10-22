@@ -50,11 +50,10 @@ body { background: var(--wa-page); color: var(--wa-ink); }
 .form-check-input:checked { background-color: var(--wa-accent); border-color: var(--wa-accent); }
 .irs--shiny .irs-bar, .irs--shiny .irs-single, .irs--shiny .irs-from, .irs--shiny .irs-to { background: var(--wa-accent); border-color: var(--wa-accent); }
 
-/* the primary action stays in view at the bottom of the sidebar */
+/* action block at the end of the settings (in normal flow so it never covers inputs) */
 .sidebar-actions {
-  position: sticky; bottom: 0; margin: 0.75rem -1rem -1rem; padding: 0.75rem 1rem 1rem;
+  margin: 0.75rem -1rem -1rem; padding: 0.9rem 1rem 1rem;
   background: var(--wa-surface); border-top: 1px solid var(--wa-hairline);
-  box-shadow: 0 -8px 16px -8px rgba(11, 11, 11, 0.12);
 }
 .btn-primary { background: var(--wa-accent); border-color: var(--wa-accent); font-weight: 600; }
 .btn-primary:hover, .btn-primary:focus { background: var(--wa-accent-dark); border-color: var(--wa-accent-dark); }
