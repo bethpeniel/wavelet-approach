@@ -52,7 +52,7 @@ plot_modwt <- function(long, title = NULL) {
   ggplot2::ggplot(long, ggplot2::aes(time, value)) +
     ggplot2::geom_line(colour = WA_COLORS$series, linewidth = 0.35) +
     ggplot2::facet_wrap(~component, ncol = 1, scales = "free_y", strip.position = "right") +
-    ggplot2::labs(x = NULL, y = NULL, title = title) +
+    wa_labs(x = NULL, y = NULL, title = title) +
     app_theme()
 }
 
@@ -87,7 +87,7 @@ plot_pairwise_wc <- function(df, J, unit = "obs", title = "Pairwise wavelet corr
     ggplot2::scale_colour_manual(values = c(`TRUE` = "white", `FALSE` = WA_COLORS$ink)) +
     ggplot2::scale_fill_gradient2(low = WA_COLORS$div_low, mid = WA_COLORS$div_mid, high = WA_COLORS$div_high,
                                   limits = c(-1, 1), name = "Correlation", na.value = "#e1e0d9") +
-    ggplot2::labs(x = NULL, y = "Wavelet level  [period band]", title = title,
+    wa_labs(x = NULL, y = "Wavelet level  [period band]", title = title,
                   subtitle = "* 95% confidence interval excludes zero; pairs sorted by overall correlation") +
     app_theme() +
     ggplot2::theme(axis.text.x = ggplot2::element_text(angle = if (npairs > 6) 45 else 0,
@@ -109,7 +109,7 @@ plot_wc_matrix <- function(df, vars, J, unit = "obs", title = "Pairwise wavelet 
     ggplot2::scale_fill_gradient2(low = WA_COLORS$div_low, mid = WA_COLORS$div_mid, high = WA_COLORS$div_high,
                                   limits = c(-1, 1), name = "Correlation", na.value = "#e1e0d9") +
     ggplot2::facet_wrap(~level_lab, ncol = if (J <= 4) J else 3) +
-    ggplot2::labs(x = NULL, y = NULL, title = title,
+    wa_labs(x = NULL, y = NULL, title = title,
                   subtitle = "* 95% confidence interval excludes zero") +
     app_theme() +
     ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, size = if (nv > 10) 8 else 10),
@@ -155,7 +155,7 @@ plot_lag_heatmap <- function(df, value, J, unit = "obs", title = "", side_labels
     ggplot2::scale_fill_gradient2(low = WA_COLORS$div_low, mid = WA_COLORS$div_mid, high = WA_COLORS$div_high,
                                   limits = c(-1, 1), name = "Correlation", na.value = "#e1e0d9") +
     ggplot2::geom_vline(xintercept = 0, colour = WA_COLORS$axis, linewidth = 0.5) +
-    ggplot2::labs(x = sprintf("Lag (%s)", lag_unit), y = "Wavelet level  [period band]",
+    wa_labs(x = sprintf("Lag (%s)", lag_unit), y = "Wavelet level  [period band]",
                   title = title,
                   subtitle = if (only_sig) "Only values whose 95% CI excludes zero are coloured; black tick = lag of maximum correlation" else "Black tick = lag of maximum correlation") +
     app_theme() + ggplot2::theme(panel.grid = ggplot2::element_blank())
@@ -179,7 +179,7 @@ plot_lag_lines <- function(df, value, J, unit = "obs", title = "", lag_unit = "o
     ggplot2::geom_vline(xintercept = 0, colour = WA_COLORS$axis, linewidth = 0.5) +
     ggplot2::geom_line(colour = WA_COLORS$series, linewidth = 0.7) +
     ggplot2::facet_wrap(~level_lab, ncol = 3) +
-    ggplot2::labs(x = sprintf("Lag (%s)", lag_unit), y = "Correlation", title = title,
+    wa_labs(x = sprintf("Lag (%s)", lag_unit), y = "Correlation", title = title,
                   subtitle = "Shaded band: 95% confidence interval") +
     app_theme()
 }
@@ -204,7 +204,7 @@ plot_wmc <- function(df, unit = "obs", title = "Wavelet multiple correlation") {
     ggplot2::geom_text(ggplot2::aes(y = pmin(lower, 0.98) - 0.06, label = max_var), size = 3.3, colour = "grey20") +
     ggplot2::geom_hline(yintercept = 0, colour = WA_COLORS$axis, linewidth = 0.5) +
     ggplot2::scale_y_continuous(limits = c(-0.1, 1.05), breaks = seq(0, 1, 0.2)) +
-    ggplot2::labs(x = "Wavelet level  [period band]", y = "Wavelet multiple correlation", title = title,
+    wa_labs(x = "Wavelet level  [period band]", y = "Wavelet multiple correlation", title = title,
                   subtitle = "Band: 95% CI. Label below each point: variable best explained by the others at that scale") +
     app_theme() +
     ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 30, hjust = 1))
@@ -246,7 +246,7 @@ plot_wlmc <- function(df, J, unit = "obs", title = "Wavelet local multiple corre
   ggplot2::ggplot(df, ggplot2::aes(time, level_lab, fill = wlmc)) +
     ggplot2::geom_tile(width = tile_w) +
     ggplot2::scale_fill_gradientn(colours = WA_COLORS$seq, limits = c(0, 1), name = "WLMC", na.value = "#e1e0d9") +
-    ggplot2::labs(x = NULL, y = "Wavelet level  [period band]", title = title,
+    wa_labs(x = NULL, y = "Wavelet level  [period band]", title = title,
                   subtitle = "Time-varying multiple correlation (moving window); each row is one wavelet scale") +
     app_theme() +
     ggplot2::theme(panel.grid = ggplot2::element_blank())
@@ -259,6 +259,6 @@ plot_wlmc_lines <- function(df, J, unit = "obs", title = "Wavelet local multiple
     ggplot2::geom_line(colour = WA_COLORS$series, linewidth = 0.6) +
     ggplot2::facet_wrap(~level_lab, ncol = 2) +
     ggplot2::scale_y_continuous(limits = c(0, 1)) +
-    ggplot2::labs(x = NULL, y = "WLMC", title = title, subtitle = "Shaded band: 95% confidence interval") +
+    wa_labs(x = NULL, y = "WLMC", title = title, subtitle = "Shaded band: 95% confidence interval") +
     app_theme()
 }
