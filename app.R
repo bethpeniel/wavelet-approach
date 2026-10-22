@@ -935,6 +935,8 @@ about_ui <- function() {
       tags$li("Gouhier, T. C., Grinsted, A., & Simko, V. (2024). biwavelet: Conduct univariate and bivariate wavelet analyses. R package version 0.20.22. ",
               tags$a(href = "https://cran.r-project.org/package=biwavelet", target = "_blank", "CRAN"), " | ",
               tags$a(href = "https://github.com/tgouhier/biwavelet", target = "_blank", "GitHub")),
+      tags$li("Oygur, T., & Unal, G. (2021). vectorwavelet: Vector wavelet coherence for multiple time series. R package (mwc / pwc after Ng & Chan 2012; a cross-check for the higher-order mode). ",
+              tags$a(href = "https://cran.r-project.org/package=vectorwavelet", target = "_blank", "CRAN")),
       tags$li("Polanco-Martinez, J. M. (2021). W2CWM2C: A graphical tool for wavelet (cross) correlation and wavelet multiple (cross) correlation analysis. R package version 2.2. ",
               tags$a(href = "https://doi.org/10.32614/CRAN.package.W2CWM2C", target = "_blank", "doi:10.32614/CRAN.package.W2CWM2C"),
               " (acknowledgement: bug reports by Peterson Owusu Junior, among others)."),
@@ -977,6 +979,8 @@ about_ui <- function() {
       tags$li("Priestley, M. B. (1981). Spectral analysis and time series. Academic Press."),
       tags$li("Liu, Y., Liang, X. S., & Weisberg, R. H. (2007). Rectification of the bias in the wavelet power spectrum. Journal of Atmospheric and Oceanic Technology, 24(12), 2093-2102."),
       tags$li("Veleda, D., Montagne, R., & Araujo, M. (2012). Cross-wavelet bias corrected by normalizing scales. Journal of Atmospheric and Oceanic Technology, 29(9), 1401-1408."),
+      tags$li("Das, D., & Kumar, S. B. (2018). International economic policy uncertainty and stock prices revisited: Multiple and partial wavelet approach. Economics Letters, 164, 100-108. ",
+              tags$a(href = "https://doi.org/10.1016/j.econlet.2018.01.013", target = "_blank", "doi:10.1016/j.econlet.2018.01.013")),
       tags$li("Dima, B., Dima, S. M., & Barna, F. (2015). A wavelet analysis of capital markets' integration in Latin America. Applied Economics, 47(10), 1019-1036. ",
               tags$a(href = "https://doi.org/10.1080/00036846.2014.987916", target = "_blank", "doi:10.1080/00036846.2014.987916")),
       tags$li("Ramsey, J. B. (2002). Wavelets in economics and finance: Past and future. Studies in Nonlinear Dynamics & Econometrics, 6(3).")

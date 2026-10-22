@@ -264,5 +264,6 @@ Peterson Owusu Junior is acknowledged in the W2CWM2C package documentation (`?W2
 * Priestley, M. B. (1981). *Spectral analysis and time series*. Academic Press.
 * Liu, Y., Liang, X. S., & Weisberg, R. H. (2007). Rectification of the bias in the wavelet power spectrum. *Journal of Atmospheric and Oceanic Technology*, 24(12), 2093–2102.
 * Veleda, D., Montagne, R., & Araújo, M. (2012). Cross-wavelet bias corrected by normalizing scales. *Journal of Atmospheric and Oceanic Technology*, 29(9), 1401–1408.
+* Das, D., & Kumar, S. B. (2018). International economic policy uncertainty and stock prices revisited: Multiple and partial wavelet approach. *Economics Letters*, 164, 100–108. https://doi.org/10.1016/j.econlet.2018.01.013
 * Dima, B., Dima, Ş. M., & Barna, F. (2015). A wavelet analysis of capital markets' integration in Latin America. *Applied Economics*, 47(10), 1019–1036. https://doi.org/10.1080/00036846.2014.987916
 * Ramsey, J. B. (2002). Wavelets in economics and finance: Past and future. *Studies in Nonlinear Dynamics & Econometrics*, 6(3).
