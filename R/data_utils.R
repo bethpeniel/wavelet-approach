@@ -225,11 +225,48 @@ to_long <- function(dates, vals) {
     data.frame(time = idx, variable = v, value = vals[[v]], stringsAsFactors = FALSE)))
 }
 
+# ---------------------------------------------------------------------------
+# Colour system (one place for every data colour)
+#   series   : one blue for single-series marks (lines, points, ribbons)
+#   sequential: ONE hue, light -> dark, for magnitudes (power, coherence 0..1)
+#   diverging : blue <-> neutral grey <-> red for signed correlations (-1..1)
+#   ink/grid  : recessive hairlines; text never wears a series colour
+# ---------------------------------------------------------------------------
+WA_COLORS <- list(
+  series   = "#2a78d6",
+  series_dark = "#1c5cab",
+  seq      = c("#f3f7fc", "#cde2fb", "#9ec5f4", "#6da7ec", "#3987e5", "#256abf", "#184f95", "#0d366b"),
+  div_low  = "#1c5cab", div_mid = "#f0efec", div_high = "#b8302f",
+  ink      = "#0b0b0b", ink2 = "#52514e", muted = "#898781",
+  grid     = "#e1e0d9", axis = "#c3c2b7", surface = "#fcfcfb"
+)
+
+PALETTE_CHOICES <- c("Blue, light to dark (recommended)" = "blue",
+                     "Classic rainbow (Torrence & Compo style)" = "rainbow")
+
+# n colours of the sequential ramp (or the classic rainbow when asked for)
+seq_ramp <- function(n = 64, palette = "blue") {
+  if (identical(palette, "rainbow")) return(grDevices::rainbow(n, start = 0, end = 0.7))
+  grDevices::colorRampPalette(WA_COLORS$seq)(n)
+}
+div_ramp <- function(n = 64) grDevices::colorRampPalette(c(WA_COLORS$div_low, WA_COLORS$div_mid, WA_COLORS$div_high))(n)
+
+# WaveletComp wants the palette as an R expression string using n.levels. The
+# string is evaluated inside WaveletComp, so it must only use base functions
+# and literal colours (app helpers are not visible there).
+wc_palette_string <- function(palette = "blue", diverging = FALSE) {
+  if (identical(palette, "rainbow")) return("rainbow(n.levels, start = 0, end = .7)")
+  # WaveletComp assigns the FIRST colour to the HIGHEST level (its default rainbow
+  # starts at red), so the ramps are passed dark -> light (and red -> blue).
+  cols <- if (diverging) c(WA_COLORS$div_high, WA_COLORS$div_mid, WA_COLORS$div_low) else rev(WA_COLORS$seq)
+  sprintf("grDevices::colorRampPalette(c(%s))(n.levels)", paste0("'", cols, "'", collapse = ", "))
+}
+
 plot_series <- function(dates, vals, title = NULL) {
   long <- to_long(dates, vals)
   long$variable <- factor(long$variable, levels = names(vals))
   ggplot2::ggplot(long, ggplot2::aes(x = time, y = value)) +
-    ggplot2::geom_line(colour = "#1f6f8b", linewidth = 0.4) +
+    ggplot2::geom_line(colour = WA_COLORS$series, linewidth = 0.45) +
     ggplot2::facet_wrap(~variable, scales = "free_y", ncol = 2) +
     ggplot2::labs(x = NULL, y = NULL, title = title) +
     app_theme()
@@ -238,9 +275,19 @@ plot_series <- function(dates, vals, title = NULL) {
 app_theme <- function() {
   ggplot2::theme_minimal(base_size = 13) +
     ggplot2::theme(panel.grid.minor = ggplot2::element_blank(),
-                   strip.text = ggplot2::element_text(face = "bold"),
-                   plot.title = ggplot2::element_text(face = "bold"),
-                   legend.position = "right")
+                   panel.grid.major = ggplot2::element_line(colour = WA_COLORS$grid, linewidth = 0.4),
+                   axis.line.x = ggplot2::element_line(colour = WA_COLORS$axis, linewidth = 0.4),
+                   axis.ticks = ggplot2::element_line(colour = WA_COLORS$axis, linewidth = 0.4),
+                   axis.text = ggplot2::element_text(colour = WA_COLORS$ink2),
+                   axis.title = ggplot2::element_text(colour = WA_COLORS$ink2),
+                   strip.text = ggplot2::element_text(face = "bold", colour = WA_COLORS$ink),
+                   plot.title = ggplot2::element_text(face = "bold", colour = WA_COLORS$ink),
+                   plot.subtitle = ggplot2::element_text(colour = WA_COLORS$ink2),
+                   plot.title.position = "plot",
+                   legend.position = "right",
+                   legend.title = ggplot2::element_text(colour = WA_COLORS$ink2),
+                   plot.background = ggplot2::element_rect(fill = WA_COLORS$surface, colour = NA),
+                   panel.background = ggplot2::element_rect(fill = WA_COLORS$surface, colour = NA))
 }
 
 unit_plural <- function(unit) {

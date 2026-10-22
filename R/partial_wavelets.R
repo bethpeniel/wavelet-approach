@@ -50,32 +50,33 @@ run_partial <- function(dates, vals, y, x1, x2, dj = 1/12, nrands = 50, sig.leve
   invisible()
 }
 
-plot_biwavelet <- function(obj, dates, unit = "observation", title = "", plot.phase = TRUE, plot.sig = TRUE) {
+plot_biwavelet <- function(obj, dates, unit = "observation", title = "", plot.phase = TRUE, plot.sig = TRUE, palette = "blue") {
   op <- graphics::par(oma = c(0, 0, 0, 1), mar = c(5, 4.5, 4, 5) + 0.1)
   on.exit(graphics::par(op), add = TRUE)
   graphics::plot(obj, plot.phase = plot.phase, plot.sig = plot.sig, lty.coi = 1, col.coi = "grey", lwd.coi = 2,
-                 lwd.sig = 2, arrow.lwd = 0.03, arrow.len = 0.12, plot.cb = TRUE,
+                 lwd.sig = 2, arrow.lwd = 0.03, arrow.len = 0.12, plot.cb = TRUE, fill.cols = seq_ramp(64, palette),
+                 col.sig = WA_COLORS$ink,
                  ylab = paste0("Period (", unit_plural(unit), ")"), xlab = "Time", main = title, xaxt = "n")
   .pw_time_axis(dates, length(obj$t))
   invisible()
 }
 
-plot_partial_pair <- function(p, which = 1, unit = "observation") {
+plot_partial_pair <- function(p, which = 1, unit = "observation", palette = "blue") {
   if (which == 1) plot_biwavelet(p$pwtc_y_x1, p$dates, unit,
-                                 sprintf("Partial wavelet coherence: %s ~ %s | %s", p$y, p$x1, p$x2))
+                                 sprintf("Partial wavelet coherence: %s ~ %s | %s", p$y, p$x1, p$x2), palette = palette)
   else            plot_biwavelet(p$pwtc_y_x2, p$dates, unit,
-                                 sprintf("Partial wavelet coherence: %s ~ %s | %s", p$y, p$x2, p$x1))
+                                 sprintf("Partial wavelet coherence: %s ~ %s | %s", p$y, p$x2, p$x1), palette = palette)
 }
 
-plot_wtc_pair <- function(p, which = 1, unit = "observation") {
+plot_wtc_pair <- function(p, which = 1, unit = "observation", palette = "blue") {
   obj <- if (which == 1) p$wtc_y_x1 else p$wtc_y_x2
   other <- if (which == 1) p$x1 else p$x2
   if (is.null(obj)) stop("Wavelet coherence was not computed.")
-  plot_biwavelet(obj, p$dates, unit, sprintf("Wavelet coherence: %s and %s", p$y, other))
+  plot_biwavelet(obj, p$dates, unit, sprintf("Wavelet coherence: %s and %s", p$y, other), palette = palette)
 }
 
 # WTC above, PWTC below, for the same pair
-plot_partial_compare <- function(p, which = 1, unit = "observation") {
+plot_partial_compare <- function(p, which = 1, unit = "observation", palette = "blue") {
   obj  <- if (which == 1) p$wtc_y_x1 else p$wtc_y_x2
   pobj <- if (which == 1) p$pwtc_y_x1 else p$pwtc_y_x2
   other <- if (which == 1) p$x1 else p$x2
@@ -83,12 +84,12 @@ plot_partial_compare <- function(p, which = 1, unit = "observation") {
   op <- graphics::par(mfrow = c(2, 1), oma = c(0, 0, 0, 1), mar = c(4, 4.5, 3, 5) + 0.1)
   on.exit(graphics::par(op), add = TRUE)
   graphics::plot(obj, plot.phase = TRUE, lty.coi = 1, col.coi = "grey", lwd.coi = 2, lwd.sig = 2,
-                 arrow.lwd = 0.03, arrow.len = 0.1, plot.cb = TRUE, xaxt = "n",
+                 arrow.lwd = 0.03, arrow.len = 0.1, plot.cb = TRUE, xaxt = "n", fill.cols = seq_ramp(64, palette), col.sig = WA_COLORS$ink,
                  ylab = paste0("Period (", unit_plural(unit), ")"), xlab = "",
                  main = sprintf("Wavelet coherence: %s and %s", p$y, other))
   .pw_time_axis(p$dates, length(obj$t))
   graphics::plot(pobj, plot.phase = TRUE, lty.coi = 1, col.coi = "grey", lwd.coi = 2, lwd.sig = 2,
-                 arrow.lwd = 0.03, arrow.len = 0.1, plot.cb = TRUE, xaxt = "n",
+                 arrow.lwd = 0.03, arrow.len = 0.1, plot.cb = TRUE, xaxt = "n", fill.cols = seq_ramp(64, palette), col.sig = WA_COLORS$ink,
                  ylab = paste0("Period (", unit_plural(unit), ")"), xlab = "Time",
                  main = sprintf("Partial wavelet coherence: %s ~ %s | %s", p$y, other, ctrl))
   .pw_time_axis(p$dates, length(pobj$t))

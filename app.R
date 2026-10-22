@@ -1,8 +1,6 @@
 # ===========================================================================
 # Bi-Partial-MultipleWavelets_Explore - Bivariate, Partial & Multiple Wavelet Analysis
 # Author : Peterson Owusu Junior (powusujunior@gmail.com)
-# A Shiny app in the spirit of the Connectedness Approach app
-# (https://davidgabauer.shinyapps.io/connectedness_approach/)
 #
 # Engines:
 #   * Bivariate  : continuous Morlet wavelet transform, cross-wavelet power,
@@ -29,7 +27,7 @@ if (!exists("prepare_dataset")) {
   for (f in list.files("R", pattern = "\\.[Rr]$", full.names = TRUE)) source(f, local = FALSE)
 }
 
-options(shiny.maxRequestSize = 30 * 1024^2, spinner.type = 6, spinner.color = "#b2182b")
+options(shiny.maxRequestSize = 30 * 1024^2, spinner.type = 6, spinner.color = "#2a78d6")
 
 APP_AUTHOR <- list(
   name        = "Peterson Owusu Junior",
@@ -46,6 +44,15 @@ APP_AUTHOR <- list(
 )
 APP_AUTHOR$links <- APP_AUTHOR$links[nzchar(APP_AUTHOR$links)]   # drop links not yet filled in
 
+# First-author wavelet papers cited in the footer (short form; full entries in OWUSU_REFERENCES)
+FOOTER_PAPERS <- list(
+  list(short = "Owusu Junior et al. (2018, Cogent Business & Management)", doi = "10.1080/23311975.2018.1481559"),
+  list(short = "Owusu Junior, Tweneboah & Adam (2019, Journal of African Business)", doi = "10.1080/15228916.2019.1583973"),
+  list(short = "Owusu Junior & Tweneboah (2020, Research in International Business and Finance)", doi = "10.1016/j.ribaf.2020.101245"),
+  list(short = "Owusu Junior et al. (2021, Heliyon)", doi = "10.1016/j.heliyon.2021.e08211"),
+  list(short = "Owusu Junior et al. (2024, Heliyon)", doi = "10.1016/j.heliyon.2024.e29409")
+)
+
 UNIT_CHOICES <- c("Daily" = "day", "Weekly" = "week", "Monthly" = "month",
                   "Quarterly" = "quarter", "Yearly" = "year", "Unspecified" = "observation")
 
@@ -53,8 +60,16 @@ BIV_TABS  <- c("tab_wt", "tab_xwt", "tab_coh", "tab_avg", "tab_phase", "tab_phim
 MULT_TABS <- c("tab_modwt", "tab_wc", "tab_wcc", "tab_wmc", "tab_wmcc", "tab_wlmc", "tab_multtab")
 PART_TABS <- c("tab_pw_wtc", "tab_pw_1", "tab_pw_2", "tab_pw_cmp", "tab_pw_tab")
 
-plot_card <- function(id, height = "560px", ...) {
-  card(full_screen = TRUE, card_body(..., withSpinner(plotOutput(id, height = height))))
+# One chart per card: a header that names it, optional controls, the plot, and
+# an optional reading note. full_screen gives every chart an expand button.
+plot_card <- function(title, id, height = "560px", controls = NULL, note = NULL) {
+  card(full_screen = TRUE, class = "chart-card",
+       card_header(title),
+       card_body(controls, withSpinner(plotOutput(id, height = height)),
+                 if (!is.null(note)) tags$p(class = "chart-note", note)))
+}
+table_card <- function(title, id) {
+  card(class = "chart-card", card_header(title), card_body(withSpinner(DTOutput(id))))
 }
 
 # ---------------------------------------------------------------------------
@@ -63,15 +78,15 @@ plot_card <- function(id, height = "560px", ...) {
 ui <- page_sidebar(
   title = tags$span(tags$strong("Bi-Partial-MultipleWavelets_Explore"),
                     tags$small(class = "text-muted ms-2", "Bivariate, partial & multiple wavelet analysis")),
-  # Colour theme taken from the app's own correlation heatmaps: the red/white/blue
-  # diverging scale (#b2182b / #f7f7f7 / #2166ac) dominates; steel teal (#1f6f8b)
-  # and plasma orange (#f89441) are supporting accents.
+  # Neutral chrome, one accent. Colour is reserved for the data: a single blue
+  # for actions and single-series marks, status colours only for status, and the
+  # charts carry the sequential / diverging ramps defined in R/data_utils.R.
   theme = bs_theme(version = 5,
-                   primary = "#b2182b", secondary = "#2166ac", success = "#2a9d8f",
-                   info = "#2166ac", warning = "#f4a582", danger = "#67001f",
-                   bg = "#f7f7f7", fg = "#1f2d3d",
-                   base_font = font_google("Source Sans 3", local = FALSE),
-                   heading_font = font_google("Source Sans 3", local = FALSE)),
+                   primary = "#2a78d6", secondary = "#52514e", success = "#0ca30c",
+                   info = "#2a78d6", warning = "#fab219", danger = "#d03b3b",
+                   bg = "#f9f9f7", fg = "#0b0b0b",
+                   base_font = 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+                   "font-size-base" = "0.95rem", "border-radius" = "0.5rem"),
   tags$head(tags$link(rel = "stylesheet", href = "custom.css")),
   fillable = FALSE,
 
@@ -169,97 +184,105 @@ ui <- page_sidebar(
                          numericInput("wlmc_M", "Local window M (blank = N/8)", value = NA, min = 5, step = 1),
                          selectInput("wlmc_window", "Local window type", WINDOW_CHOICES, selected = "gauss"))
         )
+      ),
+      accordion_panel(
+        "Display", icon = icon("palette"),
+        selectInput("palette", "Colour scale for power / coherence maps", PALETTE_CHOICES, selected = "blue"),
+        helpText("A single hue from light to dark reads magnitude correctly and survives colour-vision deficiency and greyscale printing. ",
+                 "The rainbow option reproduces the classic look of the wavelet literature.")
       )
     ),
-    actionButton("run", "Start analysis!", class = "btn-primary w-100 mt-2", icon = icon("play")),
-    downloadButton("download", "Download results", class = "btn-outline-secondary w-100 mt-2"),
-    uiOutput("status")
+    # primary action stays visible however long the settings list gets
+    div(class = "sidebar-actions",
+        actionButton("run", "Start analysis", class = "btn-primary w-100", icon = icon("play")),
+        downloadButton("download", "Download results", class = "btn-outline-secondary w-100 mt-2"),
+        uiOutput("status"))
   ),
 
   uiOutput("data_info"),
+  uiOutput("run_summary"),
 
-  navset_card_underline(
+  # Results: one menu per stage so the tab strip stays short; the two approach
+  # menus that are not selected are hidden by the server.
+  navset_underline(
     id = "tabs",
-    nav_panel("Data table", value = "tab_data", withSpinner(DTOutput("data_table"))),
-    nav_panel("Raw data", value = "tab_raw", withSpinner(plotOutput("raw_plot", height = "620px"))),
-    nav_panel("Transformed data", value = "tab_trans", withSpinner(plotOutput("trans_plot", height = "620px"))),
-    nav_panel("Summary statistics", value = "tab_stats", withSpinner(DTOutput("stats_table"))),
+    nav_menu("Data", value = "menu_data", icon = icon("table"),
+      nav_panel("Data table", value = "tab_data", table_card("Loaded data", "data_table")),
+      nav_panel("Raw data", value = "tab_raw", plot_card("Raw series", "raw_plot", "620px")),
+      nav_panel("Transformed data", value = "tab_trans", plot_card("Series as analysed", "trans_plot", "620px")),
+      nav_panel("Summary statistics", value = "tab_stats", table_card("Summary statistics of the analysed series", "stats_table"))
+    ),
 
     # ---- bivariate --------------------------------------------------------
-    nav_panel("Wavelet power", value = "tab_wt",
-              uiOutput("wt_series_ui"),
-              withSpinner(plotOutput("wt_plot", height = "560px"))),
-    nav_panel("Cross-wavelet power", value = "tab_xwt", withSpinner(plotOutput("xwt_plot", height = "560px"))),
-    nav_panel("Wavelet coherence", value = "tab_coh", withSpinner(plotOutput("coh_plot", height = "560px"))),
-    nav_panel("Average power & coherence", value = "tab_avg",
-              layout_columns(col_widths = c(6, 6),
-                             withSpinner(plotOutput("avg_wp_plot", height = "480px")),
-                             withSpinner(plotOutput("avg_wc_plot", height = "480px")))),
-    nav_panel("Phase difference", value = "tab_phase",
-              uiOutput("phase_controls"),
-              withSpinner(plotOutput("phase_plot", height = "520px")),
-              tags$p(class = "text-muted small mt-2",
-                     "Phase difference = phase(x) - phase(y). Values in (0, π/2): in phase, x leads; ",
-                     "(-π/2, 0): in phase, y leads; (π/2, π): anti-phase, y leads; (-π, -π/2): anti-phase, x leads.")),
-    nav_panel("Phase-difference image", value = "tab_phimg", withSpinner(plotOutput("phimg_plot", height = "560px"))),
-    nav_panel("Reconstruction", value = "tab_rec",
-              uiOutput("rec_controls"),
-              withSpinner(plotOutput("rec_plot", height = "520px"))),
-    nav_panel("Tables", value = "tab_bivtab",
-              h5("Average cross-wavelet power and coherence by period"),
-              withSpinner(DTOutput("coh_table")),
-              h5(class = "mt-4", "Phase summary inside significant coherence regions"),
-              withSpinner(DTOutput("phase_table"))),
+    nav_menu("Bivariate", value = "menu_biv", icon = icon("wave-square"),
+      nav_panel("Wavelet power", value = "tab_wt",
+                plot_card("Wavelet power spectrum", "wt_plot", controls = uiOutput("wt_series_ui"))),
+      nav_panel("Cross-wavelet power", value = "tab_xwt", plot_card("Cross-wavelet power", "xwt_plot")),
+      nav_panel("Wavelet coherence", value = "tab_coh",
+                plot_card("Wavelet coherence", "coh_plot",
+                          note = "Arrows give the phase difference: right = in phase, left = anti-phase, up = x leads y by a quarter cycle, down = y leads x. The shaded cone marks edge effects.")),
+      nav_panel("Average power & coherence", value = "tab_avg",
+                layout_columns(col_widths = c(6, 6),
+                               plot_card("Average cross-wavelet power", "avg_wp_plot", "480px"),
+                               plot_card("Average coherence", "avg_wc_plot", "480px"))),
+      nav_panel("Phase difference", value = "tab_phase",
+                plot_card("Phase difference in a period band", "phase_plot", "520px", controls = uiOutput("phase_controls"),
+                          note = "Phase difference = phase(x) - phase(y). (0, π/2): in phase, x leads; (-π/2, 0): in phase, y leads; (π/2, π): anti-phase, y leads; (-π, -π/2): anti-phase, x leads.")),
+      nav_panel("Phase-difference image", value = "tab_phimg", plot_card("Phase difference across time and period", "phimg_plot")),
+      nav_panel("Reconstruction", value = "tab_rec",
+                plot_card("Reconstruction from significant components", "rec_plot", "520px", controls = uiOutput("rec_controls"))),
+      nav_panel("Tables", value = "tab_bivtab",
+                table_card("Average cross-wavelet power and coherence by period", "coh_table"),
+                table_card("Phase summary inside significant coherence regions", "phase_table"))
+    ),
 
     # ---- partial ----------------------------------------------------------
-    nav_panel("Wavelet coherence (pairs)", value = "tab_pw_wtc",
-              uiOutput("pw_wtc_controls"),
-              withSpinner(plotOutput("pw_wtc_plot", height = "560px"))),
-    nav_panel("Partial coherence y~x1 | x2", value = "tab_pw_1", withSpinner(plotOutput("pw_plot1", height = "560px"))),
-    nav_panel("Partial coherence y~x2 | x1", value = "tab_pw_2", withSpinner(plotOutput("pw_plot2", height = "560px"))),
-    nav_panel("WTC vs PWTC", value = "tab_pw_cmp",
-              uiOutput("pw_cmp_controls"),
-              withSpinner(plotOutput("pw_cmp_plot", height = "900px")),
-              tags$p(class = "text-muted small mt-2",
-                     "Top: ordinary wavelet coherence of the pair. Bottom: the same pair after partialling out the control variable. ",
-                     "Regions that stay red in the bottom panel are co-movements not explained by the control; regions that fade were driven by it. ",
-                     "Arrows: right = in phase, left = anti-phase, up = x leads y by a quarter cycle, down = y leads x.")),
-    nav_panel("Tables", value = "tab_pw_tab",
-              h5("Average coherence by period (inside the cone of influence)"),
-              withSpinner(DTOutput("pw_table"))),
+    nav_menu("Partial", value = "menu_part", icon = icon("diagram-project"),
+      nav_panel("Wavelet coherence (pairs)", value = "tab_pw_wtc",
+                plot_card("Wavelet coherence of each pair", "pw_wtc_plot", controls = uiOutput("pw_wtc_controls"))),
+      nav_panel("Partial coherence y~x1 | x2", value = "tab_pw_1", plot_card("Partial wavelet coherence, y ~ x1 | x2", "pw_plot1")),
+      nav_panel("Partial coherence y~x2 | x1", value = "tab_pw_2", plot_card("Partial wavelet coherence, y ~ x2 | x1", "pw_plot2")),
+      nav_panel("WTC vs PWTC", value = "tab_pw_cmp",
+                plot_card("Coherence before and after conditioning", "pw_cmp_plot", "900px", controls = uiOutput("pw_cmp_controls"),
+                          note = "Top: ordinary wavelet coherence of the pair. Bottom: the same pair after partialling out the control variable. Regions that stay dark in the bottom panel are co-movements not explained by the control; regions that fade were driven by it.")),
+      nav_panel("Tables", value = "tab_pw_tab",
+                table_card("Average coherence by period (inside the cone of influence)", "pw_table"))
+    ),
 
     # ---- multiple ---------------------------------------------------------
-    nav_panel("MODWT decomposition", value = "tab_modwt",
-              uiOutput("modwt_controls"),
-              withSpinner(plotOutput("modwt_plot", height = "760px"))),
-    nav_panel("Wavelet correlation", value = "tab_wc",
-              uiOutput("wc_controls"),
-              withSpinner(plotOutput("wc_plot", height = "640px"))),
-    nav_panel("Wavelet cross-correlation", value = "tab_wcc",
-              withSpinner(plotOutput("wcc_plot", height = "520px")),
-              withSpinner(plotOutput("wcc_lines", height = "520px"))),
-    nav_panel("Multiple correlation", value = "tab_wmc", withSpinner(plotOutput("wmc_plot", height = "600px"))),
-    nav_panel("Multiple cross-correlation", value = "tab_wmcc",
-              withSpinner(plotOutput("wmcc_plot", height = "520px")),
-              withSpinner(plotOutput("wmcc_lines", height = "520px"))),
-    nav_panel("Local multiple correlation", value = "tab_wlmc",
-              withSpinner(plotOutput("wlmc_plot", height = "520px")),
-              withSpinner(plotOutput("wlmc_lines", height = "620px"))),
-    nav_panel("Tables", value = "tab_multtab",
-              h5("Wavelet multiple correlation"), withSpinner(DTOutput("wmc_table")),
-              h5(class = "mt-4", "Pairwise wavelet correlation"), withSpinner(DTOutput("wc_table")),
-              h5(class = "mt-4", "Wavelet multiple cross-correlation"), withSpinner(DTOutput("wmcc_table"))),
+    nav_menu("Multiple", value = "menu_mult", icon = icon("layer-group"),
+      nav_panel("MODWT decomposition", value = "tab_modwt",
+                plot_card("MODWT decomposition", "modwt_plot", "760px", controls = uiOutput("modwt_controls"))),
+      nav_panel("Wavelet correlation", value = "tab_wc",
+                plot_card("Pairwise wavelet correlation", "wc_plot", "640px", controls = uiOutput("wc_controls"))),
+      nav_panel("Wavelet cross-correlation", value = "tab_wcc",
+                plot_card("Wavelet cross-correlation by lag and level", "wcc_plot", "520px"),
+                plot_card("Wavelet cross-correlation by level, with confidence bands", "wcc_lines", "520px")),
+      nav_panel("Multiple correlation", value = "tab_wmc", plot_card("Wavelet multiple correlation", "wmc_plot", "600px")),
+      nav_panel("Multiple cross-correlation", value = "tab_wmcc",
+                plot_card("Wavelet multiple cross-correlation by lag and level", "wmcc_plot", "520px"),
+                plot_card("Wavelet multiple cross-correlation by level, with confidence bands", "wmcc_lines", "520px")),
+      nav_panel("Local multiple correlation", value = "tab_wlmc",
+                plot_card("Wavelet local multiple correlation over time", "wlmc_plot", "520px"),
+                plot_card("Wavelet local multiple correlation by level", "wlmc_lines", "620px")),
+      nav_panel("Tables", value = "tab_multtab",
+                table_card("Wavelet multiple correlation", "wmc_table"),
+                table_card("Pairwise wavelet correlation", "wc_table"),
+                table_card("Wavelet multiple cross-correlation", "wmcc_table"))
+    ),
 
     nav_spacer(),
     nav_panel("About", value = "tab_about", icon = icon("circle-info"), uiOutput("about"))
   ),
 
-  tags$footer(class = "text-muted small mt-3",
+  tags$footer(class = "app-footer",
               HTML(sprintf('<strong>Bi-Partial-MultipleWavelets_Explore</strong> by <a href="mailto:%s">%s</a>, %s (<a href="%s" target="_blank">%s</a>). ',
                            APP_AUTHOR$email, APP_AUTHOR$name, APP_AUTHOR$affiliation,
                            APP_AUTHOR$website, sub("^https?://", "", sub("/$", "", APP_AUTHOR$website)))),
-              "Built with R Shiny, WaveletComp, waveslim and wavemulcor. ",
-              "Layout inspired by the Connectedness Approach app by David Gabauer.")
+              HTML(paste0("A companion to the author's published wavelet research, including ",
+                          paste(vapply(FOOTER_PAPERS, function(p) sprintf('<a href="https://doi.org/%s" target="_blank">%s</a>', p$doi, p$short), ""),
+                                collapse = "; "),
+                          "; the full list is on the About tab. Built with R Shiny, WaveletComp, biwavelet, waveslim and wavemulcor.")))
 )
 
 # ---------------------------------------------------------------------------
@@ -322,22 +345,50 @@ server <- function(input, output, session) {
   # ---- tab visibility ----------------------------------------------------
   observeEvent(input$mode, {
     req(input$mode)
-    for (t in BIV_TABS)  if (input$mode == "biv")  nav_show("tabs", t) else nav_hide("tabs", t)
-    for (t in PART_TABS) if (input$mode == "part") nav_show("tabs", t) else nav_hide("tabs", t)
-    for (t in MULT_TABS) if (input$mode == "mult") nav_show("tabs", t) else nav_hide("tabs", t)
+    menus <- c(biv = "menu_biv", part = "menu_part", mult = "menu_mult")
+    for (m in names(menus)) if (input$mode == m) nav_show("tabs", menus[[m]]) else nav_hide("tabs", menus[[m]])
   }, ignoreNULL = FALSE)
+
+  # After a run, jump to the first result tab of the chosen approach
+  observeEvent(res(), {
+    first <- switch(res()$mode, biv = "tab_coh", part = "tab_pw_1", mult = "tab_wc")
+    nav_select("tabs", first)
+  })
 
   output$data_info <- renderUI({
     if (input$source == "own" && is.null(input$file))
-      return(div(class = "alert alert-info small py-2 mb-3", icon("upload"),
-                 " Upload a csv, txt or xlsx file in the sidebar (or switch to an example dataset), choose the settings, then click ",
-                 tags$b("Start analysis!"), "."))
+      return(div(class = "empty-state",
+                 h5("Get started"),
+                 tags$ol(class = "mb-0",
+                   tags$li(tags$b("Load data"), ": upload a csv, txt or xlsx file in the sidebar, or switch to an example dataset."),
+                   tags$li(tags$b("Choose the approach"), ": bivariate coherence, partial coherence with a control variable, or multiple wavelets."),
+                   tags$li(tags$b("Start analysis"), ": results open under the Bivariate, Partial or Multiple menu; Download results bundles tables and figures."))))
     r <- raw(); req(r)
     rng <- if (is.null(r$date)) "no dates" else paste(format(range(r$date)), collapse = " to ")
-    div(class = "alert alert-light border small py-2 mb-3",
-        tags$strong(sprintf("%d observations, %d variables", nrow(r$data), ncol(r$data))),
-        " | ", rng, " | ", paste(names(r$data), collapse = ", "),
-        if (length(r$note)) tags$div(class = "text-warning mt-1", paste(r$note, collapse = " ")))
+    div(class = "dataset-strip",
+        tags$span(class = "ds-main", sprintf("%d observations, %d variables", nrow(r$data), ncol(r$data))),
+        tags$span(class = "ds-sep"), tags$span(rng),
+        tags$span(class = "ds-sep"), tags$span(class = "ds-vars", paste(names(r$data), collapse = ", ")),
+        if (length(r$note)) tags$div(class = "ds-note", icon("circle-info"), " ", paste(r$note, collapse = " ")))
+  })
+
+  # Stat tiles summarising the last run (the numbers people look for first)
+  output$run_summary <- renderUI({
+    r <- res()
+    mode_lab <- switch(r$mode, biv = "Bivariate coherence", part = "Partial coherence", mult = "Multiple wavelets")
+    detail <- switch(r$mode,
+                     biv  = paste(r$biv$pair, collapse = " vs "),
+                     part = sprintf("%s | %s, %s", r$part$y, r$part$x1, r$part$x2),
+                     mult = sprintf("%d series, J = %d", length(r$mult$vars), r$mult$J))
+    span_lab <- if (is.null(r$date)) "index 1..N" else paste(format(range(r$date), "%b %Y"), collapse = " to ")
+    tile <- function(label, value, sub = NULL)
+      div(class = "stat-tile", div(class = "stat-label", label), div(class = "stat-value", value),
+          if (!is.null(sub)) div(class = "stat-sub", sub))
+    div(class = "stat-row",
+        tile("Approach", mode_lab, detail),
+        tile("Observations", format(nrow(r$data), big.mark = ","), r$transform),
+        tile("Sample", span_lab, paste0(ncol(r$data), " variables, ", unit_plural(r$unit))),
+        tile("Run time", paste0(r$elapsed, " s"), if (length(r$transform_note)) "rows dropped, see sidebar" else "complete"))
   })
 
   # ---- analysis ----------------------------------------------------------
@@ -350,6 +401,7 @@ server <- function(input, output, session) {
                        error = function(e) { showNotification(conditionMessage(e), type = "error"); NULL })
       validate(need(!is.null(prep), "Transformation failed."))
       out <- list(mode = input$mode, unit = input$unit, raw = r, date = prep$date, data = prep$data,
+                  palette = input$palette %||% "blue",
                   transform = transform_label(input$transformation, input$lag_n, input$volatility),
                   transform_note = prep$note,
                   stats = summary_stats(prep$data))
@@ -413,9 +465,9 @@ server <- function(input, output, session) {
   output$status <- renderUI({
     r <- res()
     tagList(
-      div(class = "small text-success mt-2", icon("check"),
-          sprintf(" Analysis finished in %s s (%s, N = %d).", r$elapsed, r$transform, nrow(r$data))),
-      if (length(r$transform_note)) div(class = "small text-warning mt-1", icon("triangle-exclamation"), " ", r$transform_note))
+      div(class = "status-line status-ok", icon("circle-check"),
+          sprintf(" Done in %s s. %s, N = %d.", r$elapsed, r$transform, nrow(r$data))),
+      if (length(r$transform_note)) div(class = "status-line status-warn", icon("triangle-exclamation"), " ", r$transform_note))
   })
 
   # ---- common outputs ----------------------------------------------------
@@ -442,10 +494,10 @@ server <- function(input, output, session) {
   })
   output$wt_plot <- renderPlot({
     r <- biv(); s <- input$wt_series; if (is.null(s) || !(s %in% r$biv$pair)) s <- r$biv$pair[1]
-    plot_wt_power(r$biv, s, r$unit, r$siglvl)
+    plot_wt_power(r$biv, s, r$unit, r$siglvl, r$palette)
   }, res = 100)
-  output$xwt_plot <- renderPlot({ r <- biv(); plot_cross_power(r$biv, r$unit, r$siglvl) }, res = 100)
-  output$coh_plot <- renderPlot({ r <- biv(); plot_coherence(r$biv, r$unit, r$siglvl) }, res = 100)
+  output$xwt_plot <- renderPlot({ r <- biv(); plot_cross_power(r$biv, r$unit, r$siglvl, r$palette) }, res = 100)
+  output$coh_plot <- renderPlot({ r <- biv(); plot_coherence(r$biv, r$unit, r$siglvl, r$palette) }, res = 100)
   output$avg_wp_plot <- renderPlot({ r <- biv(); plot_avg(r$biv, "wp", r$unit) }, res = 100)
   output$avg_wc_plot <- renderPlot({ r <- biv(); plot_avg(r$biv, "wc", r$unit) }, res = 100)
 
@@ -463,7 +515,7 @@ server <- function(input, output, session) {
     r <- biv(); req(input$phase_range)
     plot_phase(r$biv, input$phase_range[1], input$phase_range[2], r$siglvl, input$phase_sig %||% "wc")
   }, res = 100)
-  output$phimg_plot <- renderPlot({ r <- biv(); plot_phasediff_image(r$biv, r$unit, r$siglvl) }, res = 100)
+  output$phimg_plot <- renderPlot({ r <- biv(); plot_phasediff_image(r$biv, r$unit, r$siglvl, r$palette) }, res = 100)
 
   output$rec_controls <- renderUI({
     r <- biv()
@@ -500,17 +552,17 @@ server <- function(input, output, session) {
   })
   output$pw_wtc_plot <- renderPlot({
     r <- part(); validate(need(!is.null(r$part$wtc_y_x1), ""))
-    plot_wtc_pair(r$part, as.integer(input$pw_wtc_pair %||% 1), r$unit)
+    plot_wtc_pair(r$part, as.integer(input$pw_wtc_pair %||% 1), r$unit, r$palette)
   }, res = 100)
-  output$pw_plot1 <- renderPlot({ r <- part(); plot_partial_pair(r$part, 1, r$unit) }, res = 100)
-  output$pw_plot2 <- renderPlot({ r <- part(); plot_partial_pair(r$part, 2, r$unit) }, res = 100)
+  output$pw_plot1 <- renderPlot({ r <- part(); plot_partial_pair(r$part, 1, r$unit, r$palette) }, res = 100)
+  output$pw_plot2 <- renderPlot({ r <- part(); plot_partial_pair(r$part, 2, r$unit, r$palette) }, res = 100)
   output$pw_cmp_controls <- renderUI({
     r <- part(); validate(need(!is.null(r$part$wtc_y_x1), "Plain wavelet coherence was not computed (tick the option in the sidebar)."))
     radioButtons("pw_cmp_pair", NULL, choices = pw_pair_choices(r$part), inline = TRUE)
   })
   output$pw_cmp_plot <- renderPlot({
     r <- part(); validate(need(!is.null(r$part$wtc_y_x1), ""))
-    plot_partial_compare(r$part, as.integer(input$pw_cmp_pair %||% 1), r$unit)
+    plot_partial_compare(r$part, as.integer(input$pw_cmp_pair %||% 1), r$unit, r$palette)
   }, res = 100)
   output$pw_table <- renderDT({
     r <- part()
@@ -632,24 +684,24 @@ write_results <- function(r, dir) {
     utils::write.csv(cm, file.path(dir, "coherence_matrix_period_by_time.csv"))
     am <- b$wc$Angle; dimnames(am) <- dimnames(cm)
     utils::write.csv(am, file.path(dir, "phase_difference_matrix_period_by_time.csv"))
-    save_png("wavelet_power_x.png", plot_wt_power(b, b$pair[1], r$unit, r$siglvl))
-    save_png("wavelet_power_y.png", plot_wt_power(b, b$pair[2], r$unit, r$siglvl))
-    save_png("cross_wavelet_power.png", plot_cross_power(b, r$unit, r$siglvl))
-    save_png("wavelet_coherence.png", plot_coherence(b, r$unit, r$siglvl))
+    save_png("wavelet_power_x.png", plot_wt_power(b, b$pair[1], r$unit, r$siglvl, r$palette))
+    save_png("wavelet_power_y.png", plot_wt_power(b, b$pair[2], r$unit, r$siglvl, r$palette))
+    save_png("cross_wavelet_power.png", plot_cross_power(b, r$unit, r$siglvl, r$palette))
+    save_png("wavelet_coherence.png", plot_coherence(b, r$unit, r$siglvl, r$palette))
     save_png("average_coherence.png", plot_avg(b, "wc", r$unit))
-    save_png("phase_difference_image.png", plot_phasediff_image(b, r$unit, r$siglvl))
+    save_png("phase_difference_image.png", plot_phasediff_image(b, r$unit, r$siglvl, r$palette))
   } else if (r$mode == "part") {
     p <- r$part
     utils::write.csv(partial_table(p), file.path(dir, "partial_coherence_by_period.csv"), row.names = FALSE)
     utils::write.csv(partial_matrix(p$pwtc_y_x1, r$date), file.path(dir, sprintf("pwtc_%s_%s_given_%s_period_by_time.csv", p$y, p$x1, p$x2)))
     utils::write.csv(partial_matrix(p$pwtc_y_x2, r$date), file.path(dir, sprintf("pwtc_%s_%s_given_%s_period_by_time.csv", p$y, p$x2, p$x1)))
-    save_png(sprintf("partial_coherence_%s_%s_given_%s.png", p$y, p$x1, p$x2), plot_partial_pair(p, 1, r$unit))
-    save_png(sprintf("partial_coherence_%s_%s_given_%s.png", p$y, p$x2, p$x1), plot_partial_pair(p, 2, r$unit))
+    save_png(sprintf("partial_coherence_%s_%s_given_%s.png", p$y, p$x1, p$x2), plot_partial_pair(p, 1, r$unit, r$palette))
+    save_png(sprintf("partial_coherence_%s_%s_given_%s.png", p$y, p$x2, p$x1), plot_partial_pair(p, 2, r$unit, r$palette))
     if (!is.null(p$wtc_y_x1)) {
-      save_png(sprintf("wavelet_coherence_%s_%s.png", p$y, p$x1), plot_wtc_pair(p, 1, r$unit))
-      save_png(sprintf("wavelet_coherence_%s_%s.png", p$y, p$x2), plot_wtc_pair(p, 2, r$unit))
-      save_png(sprintf("wtc_vs_pwtc_%s_%s_given_%s.png", p$y, p$x1, p$x2), plot_partial_compare(p, 1, r$unit), h = 10)
-      save_png(sprintf("wtc_vs_pwtc_%s_%s_given_%s.png", p$y, p$x2, p$x1), plot_partial_compare(p, 2, r$unit), h = 10)
+      save_png(sprintf("wavelet_coherence_%s_%s.png", p$y, p$x1), plot_wtc_pair(p, 1, r$unit, r$palette))
+      save_png(sprintf("wavelet_coherence_%s_%s.png", p$y, p$x2), plot_wtc_pair(p, 2, r$unit, r$palette))
+      save_png(sprintf("wtc_vs_pwtc_%s_%s_given_%s.png", p$y, p$x1, p$x2), plot_partial_compare(p, 1, r$unit, r$palette), h = 10)
+      save_png(sprintf("wtc_vs_pwtc_%s_%s_given_%s.png", p$y, p$x2, p$x1), plot_partial_compare(p, 2, r$unit, r$palette), h = 10)
     }
   } else {
     m <- r$mult

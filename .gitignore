@@ -18,3 +18,6 @@ rsconnect/
 Thumbs.db
 .DS_Store
 *.log
+
+# planning notes kept beside the app
+/*.txt

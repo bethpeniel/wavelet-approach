@@ -8,8 +8,8 @@
 [ResearchGate](https://www.researchgate.net/profile/Peterson-Owusu-Junior) ·
 [IDEAS/RePEc](https://ideas.repec.org/e/pow25.html))
 
-A browser-based app, modelled on David Gabauer's *Connectedness Approach* app, for
-studying co-movement of financial and economic time series in the time–frequency domain.
+A browser-based app for studying co-movement of financial and economic time series in the
+time–frequency domain.
 
 Suggested citation: Owusu Junior, P. (2026). *Bi-Partial-MultipleWavelets_Explore: A Shiny application for
 bivariate, partial and multiple wavelet analysis*. R Shiny application.
@@ -18,7 +18,7 @@ bivariate, partial and multiple wavelet analysis*. R Shiny application.
 
 | Component | State |
 |---|---|
-| Live app (Posit Connect Cloud) | **Online** at <https://01a1576a-2a57-ffbf-7f06-4a308e3389ec.share.connect.posit.cloud/> — public, serving the latest commit (bivariate, partial and multiple wavelets; author credit; colour-bar theme; five example datasets) |
+| Live app (Posit Connect Cloud) | **Online** at <https://01a1576a-2a57-ffbf-7f06-4a308e3389ec.share.connect.posit.cloud/> — public, serving the latest commit (bivariate, partial and multiple wavelets; author credit; five example datasets) |
 | Source (GitHub) | <https://github.com/bethpeniel/wavelet-approach> — public, branch `main`, local folder and remote identical; every push triggers an automatic republish on Connect Cloud |
 | shinyapps.io copy | Terminated 2026-10-20 (`pete-econ/wavelet_approach`); `deploy.R` kept only as a fallback |
 | Local copy | `C:\Users\peteo\wavelet\wavelet_app`; runs with `start_app.bat` or the Rscript command below |
@@ -78,6 +78,19 @@ the `APP_URL` constant at the top of the file to the published address.
 | Gold & cryptocurrencies | `gold_cryptos9.txt` | daily, 2015 – 2019 | returns of gold and eight cryptocurrencies |
 | International REITs | `REIT.txt` | daily, 2017 – 2025 | returns of eight REIT markets |
 | Ghana cocoa, gold & exchange rate | `Dataset3_Gold+Cocoa+Exrate.txt` | monthly, 2015 – 2023 | levels |
+
+## Design
+
+* **Layout**: settings in a collapsible sidebar with the primary action pinned at the bottom;
+  results grouped under Data / Bivariate / Partial / Multiple menus (only the chosen approach's
+  menu is shown); every chart in its own card with a title, an expand button and a reading note;
+  stat tiles summarise each run; tables accompany every chart family.
+* **Colour**: neutral interface with a single blue accent, so colour is reserved for the data.
+  Magnitudes (power, coherence, local correlation) use one hue from light to dark; signed
+  correlations use a blue–grey–red diverging scale with a neutral midpoint; status colours are
+  used only for status. A *Display* option restores the classic rainbow scale for readers used
+  to the wavelet literature. All chart colours are defined once in `R/data_utils.R`
+  (`WA_COLORS`) and interface tokens in `www/custom.css`.
 
 ## Input data (your own files)
 
