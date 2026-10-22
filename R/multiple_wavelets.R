@@ -150,20 +150,27 @@ plot_lag_heatmap <- function(df, value, J, unit = "obs", title = "", side_labels
     d[which.max(d$val), c("lag", "level_lab")]
   }))
   lmax <- max(abs(df$lag))
+  # Line conventions follow Fernandez-Macho (2012) / Polanco-Martinez's W2CWM2C
+  # WCC/WMCC plots: dotted vertical lines (lty = 3) at the labelled lags, and a
+  # dashed segment (lty = 2) in each level at the lag of maximum correlation.
+  step <- if (lmax >= 20) 5 else if (lmax >= 8) 2 else 1
+  lag_ticks <- unique(c(rev(seq(0, -lmax, by = -step)), seq(0, lmax, by = step)))
   p <- ggplot2::ggplot(df, ggplot2::aes(lag, level_lab)) +
     ggplot2::geom_tile(ggplot2::aes(fill = fill)) +
     ggplot2::scale_fill_gradient2(low = WA_COLORS$div_low, mid = WA_COLORS$div_mid, high = WA_COLORS$div_high,
                                   limits = c(-1, 1), name = "Correlation", na.value = "#e1e0d9") +
-    ggplot2::geom_vline(xintercept = 0, colour = WA_COLORS$axis, linewidth = 0.5) +
+    ggplot2::scale_x_continuous(breaks = lag_ticks, expand = c(0, 0)) +
+    ggplot2::scale_y_discrete(expand = c(0, 0)) +
+    ggplot2::geom_vline(xintercept = lag_ticks, linetype = "dotted", linewidth = 0.7, colour = WA_COLORS$ink) +
     ggplot2::labs(x = sprintf("Lag (%s)", lag_unit), y = "Wavelet level  [period band]",
                   title = title,
-                  subtitle = if (only_sig) "Only values whose 95% CI excludes zero are coloured; black tick = lag of maximum correlation" else "Black tick = lag of maximum correlation") +
+                  subtitle = if (only_sig) "Only values whose 95% CI excludes zero are coloured. Dashed = lag of maximum correlation; dotted = lag grid" else "Dashed = lag of maximum correlation; dotted = lag grid") +
     app_theme() + ggplot2::theme(panel.grid = ggplot2::element_blank())
   if (!is.null(maxlag) && nrow(maxlag))
     p <- p + ggplot2::geom_segment(data = maxlag,
                                    ggplot2::aes(x = lag, xend = lag,
                                                 y = as.numeric(level_lab) - 0.5, yend = as.numeric(level_lab) + 0.5),
-                                   linewidth = 1.1, colour = WA_COLORS$ink)
+                                   linetype = "dashed", linewidth = 1.0, colour = WA_COLORS$ink)
   if (!is.null(side_labels))
     p <- p + ggplot2::annotate("label", x = lmax, y = seq_len(J), label = side_labels,
                                hjust = 1, size = 3.2, fill = "white", alpha = 0.85)
